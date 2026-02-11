@@ -1,0 +1,224 @@
+/* NowPoster.css */
+
+.poster-page-container {
+  padding: 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  background-color: #fcfcfc;
+}
+
+/* The element we capture - keep fixed width for high-quality PNG */
+.poster-capture-area {
+  width: 500px;
+  background-color: #fff;
+  padding: 50px 40px;
+  border: 12px solid #1a1a1a;
+  color: #1a1a1a;
+  box-sizing: border-box;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.poster-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.poster-title {
+  margin: 0;
+  font-size: 25px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-weight: 900;
+}
+
+.poster-divider {
+  width: 80px;
+  height: 3px;
+  background-color: #1a1a1a;
+  margin: 15px auto;
+}
+
+.product-item {
+  margin-bottom: 25px;
+}
+
+.product-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.product-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.product-price {
+  font-weight: bold;
+}
+
+.product-description {
+  margin: 4px 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.variant-list {
+  margin-top: 5px;
+  padding-left: 12px;
+  border-left: 1px solid #ddd;
+}
+
+.variant-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #555;
+}
+
+.poster-footer {
+  margin-top: 50px;
+  text-align: center;
+  border-top: 2px solid #f0f0f0;
+  padding-top: 30px;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.shop-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.footer-disclaimer {
+  margin: 15px 0 0;
+  font-size: 8px;
+  color: #ac1c1c;
+  letter-spacing: 1px;
+  line-height: 1.4;
+}
+
+/* Checklist Controls Section */
+.controls-container {
+  width: 100%;
+  max-width: 500px;
+  padding: 25px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-sizing: border-box;
+}
+
+.controls-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.download-btn {
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: opacity 0.2s;
+}
+
+.download-btn:active {
+  opacity: 0.7;
+}
+
+.checklist-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+/* NowPoster.css additions */
+
+.checklist-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.group-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #888;
+  letter-spacing: 1px;
+  margin: 0 0 5px 0;
+  font-weight: bold;
+}
+
+.checklist-item.checked {
+  background-color: #f0fff4; /* Light green for active items */
+  border-color: #c6f6d5;
+}
+
+.item-text {
+  text-overflow: ellipsis; 
+  overflow: hidden; 
+  white-space: nowrap;
+}
+
+/* Ensure the grid remains responsive */
+.checklist-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .poster-capture-area {
+    width: 100%; /* Scale down the preview for mobile screens */
+    max-width: 500px;
+    padding: 30px 20px;
+    border-width: 8px;
+  }
+  
+  .checklist-grid {
+    grid-template-columns: 1fr; /* Stack checkboxes on mobile */
+  }
+
+  .controls-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .download-btn {
+    width: 100%;
+  }
+
+  .checklist-grid {
+    grid-template-columns: 1fr;
+  }
+}

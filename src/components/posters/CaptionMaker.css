@@ -1,0 +1,102 @@
+/* CaptionMaker.css */
+.caption-maker-container {
+  width: 100%;
+  max-width: 500px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.caption-card {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Template Switching Tabs */
+.template-tabs {
+  display: flex;
+  background: #f0f0f0;
+  padding: 4px;
+  border-radius: 10px;
+  gap: 4px;
+}
+
+.template-tabs button {
+  flex: 1;
+  padding: 10px 5px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-inactive {
+  background: transparent;
+  color: #666;
+}
+
+.tab-inactive:hover {
+  color: #000;
+}
+
+.tab-active {
+  background: #ffffff;
+  color: #000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Textarea Styling */
+.caption-textarea-wrapper textarea {
+  width: 100%;
+  height: 200px;
+  padding: 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  background: #fafafa;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  resize: none;
+  outline: none;
+  color: #2c3e50;
+  box-sizing: border-box;
+}
+
+/* Copy Button */
+.copy-main-btn {
+  width: 100%;
+  padding: 16px;
+  background: #000;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.copy-main-btn:active {
+  transform: scale(0.98);
+}
+
+.is-copied {
+  background: #10b981 !important; /* Success Green */
+}
+
+.caption-footer-hint {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 16px;
+  text-align: center;
+}

@@ -1,48 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import html2canvas from "html2canvas";
 
-export default function NowPoster({ shopId }) {
-  const [products, setProducts] = useState([]);
+export default function NowPoster({ products = [] }) {
   const [selectedProducts, setSelectedProducts] = useState({});
-  const [loading, setLoading] = useState(true);
   const posterRef = useRef();
 
+  // Initialize selection when products change
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:3000/api/v1/products?shop_id=${shopId}`
-        );
-        // Find the "Now" group
-        const nowGroup = res.data.find((g) => g.name === "Now");
-        if (nowGroup) {
-          setProducts(nowGroup.products);
-          // initialize selectedProducts state
-          const initSelection = {};
-          nowGroup.products.forEach((p) => {
-            initSelection[p.id] = { selected: true, variants: {} };
-            p.variants.forEach((v) => {
-              initSelection[p.id].variants[v.id] = true; // all variants selected by default
-            });
-          });
-          setSelectedProducts(initSelection);
-        }
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching products:", err);
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, [shopId]);
+    const initSelection = {};
+
+    products.forEach((p) => {
+      initSelection[p.id] = { selected: true, variants: {} };
+
+      p.variants?.forEach((v) => {
+        initSelection[p.id].variants[v.id] = true;
+      });
+    });
+
+    setSelectedProducts(initSelection);
+  }, [products]);
 
   const toggleProduct = (productId) => {
     setSelectedProducts((prev) => ({
       ...prev,
       [productId]: {
         ...prev[productId],
-        selected: !prev[productId].selected,
+        selected: !prev[productId]?.selected,
       },
     }));
   };
@@ -53,8 +36,8 @@ export default function NowPoster({ shopId }) {
       [productId]: {
         ...prev[productId],
         variants: {
-          ...prev[productId].variants,
-          [variantId]: !prev[productId].variants[variantId],
+          ...prev[productId]?.variants,
+          [variantId]: !prev[productId]?.variants?.[variantId],
         },
       },
     }));
@@ -62,6 +45,7 @@ export default function NowPoster({ shopId }) {
 
   const handleDownload = async () => {
     if (!posterRef.current) return;
+
     const canvas = await html2canvas(posterRef.current);
     const link = document.createElement("a");
     link.download = `NowPoster.png`;
@@ -69,7 +53,7 @@ export default function NowPoster({ shopId }) {
     link.click();
   };
 
-  if (loading) return <div>Loading Now products...</div>;
+  if (!products.length) return <div>No products available.</div>;
 
   return (
     <div>
@@ -101,7 +85,7 @@ export default function NowPoster({ shopId }) {
                 Price: {p.price} | Stock: {p.stock}
               </p>
 
-              {p.variants.length > 0 && (
+              {p.variants?.length > 0 && (
                 <div style={{ marginTop: "5px" }}>
                   <strong>Variants:</strong>
                   {p.variants.map((v) => (
@@ -109,7 +93,9 @@ export default function NowPoster({ shopId }) {
                       <label>
                         <input
                           type="checkbox"
-                          checked={selectedProducts[p.id].variants[v.id]}
+                          checked={
+                            selectedProducts[p.id]?.variants?.[v.id] || false
+                          }
                           onChange={() => toggleVariant(p.id, v.id)}
                         />{" "}
                         {v.name} - {v.price}

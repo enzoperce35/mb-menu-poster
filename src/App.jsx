@@ -1,75 +1,49 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import NowPoster from "./components/posters/NowPoster.jsx";
 import ImagePoster from "./components/posters/ImagePoster.jsx";
+import { fetchProducts } from "./api/products";
 
 export default function App() {
-  const [products, setProducts] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [posterType, setPosterType] = useState("now"); // "now" or "image"
+  const [posterType, setPosterType] = useState("now");
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const load = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:3000/api/v1/products?shop_id=1"
-        );
-        const nowGroup = res.data.find((g) => g.name === "Now");
-        if (nowGroup) {
-          // prepare for ImagePoster selection
-          const productsWithSelection = nowGroup.products.map((p) => ({
-            ...p,
-            selected: true, // default all selected
-          }));
-          setProducts(productsWithSelection);
-        }
-        setLoading(false);
+        const data = await fetchProducts(1);
+        setGroups(data);
       } catch (err) {
         console.error("Error fetching products:", err);
+      } finally {
         setLoading(false);
       }
     };
-    fetchProducts();
+
+    load();
   }, []);
 
   if (loading) return <div>Loading menu...</div>;
+
+  const nowGroup = groups.find((g) => g.name === "Now");
 
   return (
     <div style={{ padding: "20px" }}>
       <h3>MB-Menu-Poster</h3>
 
       <div style={{ marginBottom: "15px" }}>
-        <button
-          onClick={() => setPosterType("now")}
-          style={{
-            marginRight: "10px",
-            padding: "8px 15px",
-            backgroundColor: posterType === "now" ? "#333" : "#eee",
-            color: posterType === "now" ? "#fff" : "#000",
-            border: "none",
-            borderRadius: "5px",
-          }}
-        >
+        <button onClick={() => setPosterType("now")}>
           Now Poster
         </button>
-        <button
-          onClick={() => setPosterType("image")}
-          style={{
-            padding: "8px 15px",
-            backgroundColor: posterType === "image" ? "#333" : "#eee",
-            color: posterType === "image" ? "#fff" : "#000",
-            border: "none",
-            borderRadius: "5px",
-          }}
-        >
+        <button onClick={() => setPosterType("image")}>
           Image Poster
         </button>
       </div>
 
       {posterType === "now" ? (
-        <NowPoster shopId={1} />
+        <NowPoster products={nowGroup?.products || []} />
       ) : (
-        <ImagePoster products={products} />
+        <ImagePoster products={nowGroup?.products || []} />
       )}
     </div>
   );

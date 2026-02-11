@@ -1,0 +1,82 @@
+/* FeaturedPoster.css */
+.featured-page-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  background-color: #f8f8f8;
+}
+
+.featured-capture-area {
+  width: 500px;
+  background-color: #ffffff;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Artistic Masonry Layout */
+.collage-masonry {
+  column-count: 2;
+  column-gap: 15px;
+  width: 100%;
+}
+
+.collage-item {
+  break-inside: avoid;
+  margin-bottom: 15px;
+  overflow: hidden;
+  border-radius: 4px; /* Slight rounding for softness */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Very subtle lift */
+  transition: transform 0.3s ease;
+}
+
+.collage-image {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  /* We remove fixed aspect-ratio to allow natural photo shapes */
+  filter: contrast(1.02) saturate(1.1); /* Subtle artistic pop */
+}
+
+/* Checklist Controls Section */
+.controls-container {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.checklist-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.checklist-item.checked {
+  background: #000;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .featured-capture-area {
+    width: 100%;
+    max-width: 500px;
+  }
+  .checklist-grid {
+    grid-template-columns: 1fr;
+  }
+}

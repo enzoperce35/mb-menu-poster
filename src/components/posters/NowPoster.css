@@ -1,44 +1,90 @@
-/* NowPoster.css */
-
+/* --- General Page Container --- */
 .poster-page-container {
-  padding: 20px;
+  padding: 10px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 20px;
   background-color: #fcfcfc;
+  min-height: 100vh;
 }
 
-/* The element we capture - keep fixed width for high-quality PNG */
+/* --- Scale Wrapper: Fixes mobile "tightness" --- */
+.poster-scale-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  overflow: visible;
+}
+
+/* --- THE PREVIEW AREA (The Paper) --- */
 .poster-capture-area {
   width: 500px;
   background-color: #fff;
-  padding: 50px 40px;
-  border: 12px solid #1a1a1a;
-  color: #1a1a1a;
+  padding: 0; /* Zero padding in edit mode for "maximized" look */
   box-sizing: border-box;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transform-origin: top center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Mobile Scaling: Prevents 500px from breaking the layout */
+@media (max-width: 550px) {
+  .poster-capture-area {
+    transform: scale(0.75);
+    margin-bottom: -180px; /* Pulls controls up into the "ghost space" */
+  }
+}
+
+@media (max-width: 400px) {
+  .poster-capture-area {
+    transform: scale(0.65);
+    margin-bottom: -240px;
+  }
+}
+
+/* --- THE SECRET MARGIN: Applied during Download ONLY --- */
+.poster-capture-area.capture-mode {
+  padding: 20px !important; /* The white margin appears in the PNG */
+  transform: scale(1) !important;
+  margin-bottom: 0 !important;
+}
+
+/* --- THE INTERNAL FRAME (The Black Border) --- */
+.poster-internal-frame {
+  border: 12px solid #1a1a1a;
+  padding: 50px 35px;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+/* --- Poster Header --- */
 .poster-header {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
 }
 
 .poster-title {
   margin: 0;
-  font-size: 25px;
+  font-size: 26px;
   text-transform: uppercase;
-  letter-spacing: 4px;
+  letter-spacing: 6px;
   font-weight: 900;
+  color: #1a1a1a;
 }
 
 .poster-divider {
-  width: 80px;
-  height: 3px;
+  width: 60px;
+  height: 4px;
   background-color: #1a1a1a;
-  margin: 15px auto;
+  margin: 20px auto;
+}
+
+/* --- Product Items --- */
+.poster-content-list {
+  flex-grow: 1;
 }
 
 .product-item {
@@ -53,37 +99,43 @@
 
 .product-name {
   margin: 0;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
 .product-price {
-  font-weight: bold;
+  font-weight: 800;
+  font-size: 17px;
 }
 
 .product-description {
   margin: 4px 0;
-  color: #666;
+  color: #555;
   font-size: 13px;
+  line-height: 1.4;
+  max-width: 90%;
 }
 
 .variant-list {
-  margin-top: 5px;
+  margin-top: 8px;
   padding-left: 12px;
-  border-left: 1px solid #ddd;
+  border-left: 2px solid #eee;
 }
 
 .variant-item {
   display: flex;
   justify-content: space-between;
   font-size: 13px;
-  color: #555;
+  color: #666;
+  margin-bottom: 2px;
 }
 
+/* --- Poster Footer --- */
 .poster-footer {
   margin-top: 50px;
   text-align: center;
-  border-top: 2px solid #f0f0f0;
+  border-top: 1px solid #eee;
   padding-top: 30px;
 }
 
@@ -91,134 +143,133 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .shop-logo {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   object-fit: cover;
+  border: 1px solid #eee;
+}
+
+.footer-shop-name {
+  margin: 5px 0 0;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .footer-disclaimer {
   margin: 15px 0 0;
-  font-size: 8px;
+  font-size: 9px;
   color: #ac1c1c;
+  font-weight: bold;
   letter-spacing: 1px;
-  line-height: 1.4;
+  line-height: 1.5;
+  text-transform: uppercase;
 }
 
-/* Checklist Controls Section */
+/* --- CONTROLS SECTION (The Checklist) --- */
 .controls-container {
   width: 100%;
   max-width: 500px;
-  padding: 25px;
-  background-color: #f9f9f9;
-  border-radius: 12px;
-  border: 1px solid #eee;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 16px;
+  border: 1px solid #e0e0e0;
   box-sizing: border-box;
+  z-index: 10;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
 
 .controls-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .download-btn {
-  padding: 10px 20px;
+  padding: 12px 24px;
   cursor: pointer;
   background-color: #000;
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  transition: opacity 0.2s;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  transition: transform 0.2s ease;
 }
 
 .download-btn:active {
-  opacity: 0.7;
+  transform: scale(0.95);
 }
 
+.checklist-group {
+  margin-bottom: 20px;
+}
+
+.group-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #999;
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+  font-weight: 800;
+}
+
+/* Fixed the "Odd" look with auto-fill and uniform sizing */
 .checklist-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 10px;
 }
 
 .checklist-item {
   display: flex;
   align-items: center;
-  padding: 12px;
-  background-color: #fff;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+  justify-content: center;
+  padding: 12px 10px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  border: 1.5px solid #eee;
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-/* NowPoster.css additions */
-
-.checklist-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.group-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  color: #888;
-  letter-spacing: 1px;
-  margin: 0 0 5px 0;
-  font-weight: bold;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  min-height: 20px;
+  text-align: center;
 }
 
 .checklist-item.checked {
-  background-color: #f0fff4; /* Light green for active items */
-  border-color: #c6f6d5;
+  background-color: #000;
+  color: #fff;
+  border-color: #000;
 }
 
 .item-text {
-  text-overflow: ellipsis; 
-  overflow: hidden; 
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Ensure the grid remains responsive */
-.checklist-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-/* Responsive adjustments */
+/* Mobile adjustments for the checklist */
 @media (max-width: 600px) {
-  .poster-capture-area {
-    width: 100%; /* Scale down the preview for mobile screens */
-    max-width: 500px;
-    padding: 30px 20px;
-    border-width: 8px;
-  }
-  
   .checklist-grid {
-    grid-template-columns: 1fr; /* Stack checkboxes on mobile */
+    grid-template-columns: 1fr; /* Stack items for better tap targets */
   }
-
   .controls-header {
     flex-direction: column;
     gap: 15px;
-    text-align: center;
   }
 
-  .download-btn {
-    width: 100%;
+  .checklist-group {
+    margin: 50px;
   }
 
-  .checklist-grid {
-    grid-template-columns: 1fr;
+  .checklist-item {
+    font-weight: 400;
+    min-height: 15px;
   }
 }

@@ -20,18 +20,18 @@ export default function CaptionMaker({ shop }) {
     {
       id: "vibe",
       label: "Social Vibe",
-      text: `${greeting} ✨\n\nOpen po kami today. Ang mga available po ngayon ay nsa image sa baba. Pwede nyo din po i-check ang aming app:\n\n${shopLink}\n\nThank You!`
+      text: `${greeting} ✨\n\nOpen po kami today. Ang mga available po ngayon ay nasa image sa ibaba. Message nyo lang po kami sa Messenger account na ito o gamitin ang aming app:\n\n${shopLink}\n\nThank You!`
     },
     {
       id: "direct",
       label: "Direct & Clean",
-      text: `${greeting} ✨\n\nNasa baba po ang menu, Marami pa po kaming products sa aming app:
+      text: `${greeting} ✨\n\nHello!, check nyo po and mga available namin sa ibaba, Marami pa po kaming products sa aming app:
 \n\n${shopLink}\n\nThank You!`
     },
     {
       id: "minimal",
       label: "Short / Bio",
-      text: `${greeting} ✨\n\nHi, order na po kayo sa:\n\n${shopLink}\n\nThank You!`
+      text: `${greeting} ✨\n\nHi, order na po kayo\n\n${shopLink}\n\nThank You!`
     }
   ];
 

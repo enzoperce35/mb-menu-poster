@@ -22,12 +22,12 @@ export default function CaptionMaker({ shop }) {
     {
       id: "vibe",
       label: "Social Vibe",
-      text: `${greeting} ✨\n\nOpen po kami today! Ang mga available po ngayon ay nasa image sa ibaba.\n\nMessage nyo lang po kami dito sa Messenger:\n📲 ${messengerLink}\n\nO gamitin ang aming app para sa list ng products:\n🛒 ${shopLink}\n\nThank You!`
+      text: `${greeting} ✨\n\nOpen po kami today! Ang mga available po ngayon ay nasa image sa ibaba.\n\nMessage nyo lang po kami dito sa Messenger:\n📲 ${messengerLink}\n\nO gamitin ang aming app para sa mas marami pang products:\n🛒 ${shopLink}\n\nThank You!`
     },
     {
       id: "direct",
       label: "Direct & Clean",
-      text: `${greeting} ✨\n\nHello! Check nyo po ang mga available namin sa ibaba. Marami pa po kaming choice sa aming app!\n\nOrder here (Messenger):\n📲 ${messengerLink}\n\nView Menu (App):\n🛒 ${shopLink}\n\nThank You!`
+      text: `${greeting} ✨\n\nHello! Check nyo po ang mga available namin sa ibaba. Marami pa po products sa aming app.\n\nOrder here (Messenger):\n📲 ${messengerLink}\n\nView Menu (App):\n🛒 ${shopLink}\n\nThank You!`
     },
     {
       id: "minimal",

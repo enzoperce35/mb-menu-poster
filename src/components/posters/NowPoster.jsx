@@ -149,6 +149,7 @@ export default function NowPoster({ products = [], shop }) {
                   />
                 )}
                 <div className="footer-shop-info">
+                  <p style={{ margin: 0, fontSize: "12px", textTransform: "uppercase", color: "#888" }}>Exclusively from</p>
                   <h2 className="footer-shop-name">
                     {shop?.name || "Our Shop"}
                   </h2>

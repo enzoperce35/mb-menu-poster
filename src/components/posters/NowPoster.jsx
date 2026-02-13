@@ -1,43 +1,68 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import html2canvas from "html2canvas";
-import "./NowPoster.css"; 
+import "./NowPoster.css";
 
 export default function NowPoster({ products = [], shop }) {
   const [selectedProducts, setSelectedProducts] = useState({});
   const [isCapturing, setIsCapturing] = useState(false);
   const posterRef = useRef();
 
-  // Load selection from localStorage (Remembering your choices)
-  useEffect(() => {
-    const savedSelection = localStorage.getItem(`now-poster-selection-${shop?.id || 'default'}`);
-    if (savedSelection) {
-      setSelectedProducts(JSON.parse(savedSelection));
-    } else {
-      const initSelection = {};
-      products.forEach((p) => { initSelection[p.id] = { selected: true }; });
-      setSelectedProducts(initSelection);
-    }
-  }, [products, shop?.id]);
+  // ✅ Only include products with stock > 0
+  const availableProducts = useMemo(() => {
+    return products.filter((p) => Number(p.stock) > 0);
+  }, [products]);
 
-  // Save selection to localStorage
+  // ✅ Load selection from localStorage
+  useEffect(() => {
+    const savedSelection = localStorage.getItem(
+      `now-poster-selection-${shop?.id || "default"}`
+    );
+
+    const initSelection = {};
+
+    if (savedSelection) {
+      const parsed = JSON.parse(savedSelection);
+
+      // Only keep products that are still available
+      availableProducts.forEach((p) => {
+        initSelection[p.id] = {
+          selected: parsed[p.id]?.selected ?? true,
+        };
+      });
+    } else {
+      availableProducts.forEach((p) => {
+        initSelection[p.id] = { selected: true };
+      });
+    }
+
+    setSelectedProducts(initSelection);
+  }, [availableProducts, shop?.id]);
+
+  // ✅ Save selection
   useEffect(() => {
     if (Object.keys(selectedProducts).length > 0) {
-      localStorage.setItem(`now-poster-selection-${shop?.id || 'default'}`, JSON.stringify(selectedProducts));
+      localStorage.setItem(
+        `now-poster-selection-${shop?.id || "default"}`,
+        JSON.stringify(selectedProducts)
+      );
     }
   }, [selectedProducts, shop?.id]);
 
   const toggleProduct = (productId) => {
     setSelectedProducts((prev) => ({
       ...prev,
-      [productId]: { ...prev[productId], selected: !prev[productId]?.selected },
+      [productId]: {
+        ...prev[productId],
+        selected: !prev[productId]?.selected,
+      },
     }));
   };
 
   const handleDownload = async () => {
     if (!posterRef.current) return;
+
     setIsCapturing(true);
 
-    // Wait for Capture Mode CSS to apply
     setTimeout(async () => {
       try {
         const canvas = await html2canvas(posterRef.current, {
@@ -48,7 +73,7 @@ export default function NowPoster({ products = [], shop }) {
         });
 
         const link = document.createElement("a");
-        link.download = `Menu_Now_${shop?.name || 'Poster'}.png`;
+        link.download = `Menu_Now_${shop?.name || "Poster"}.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
       } catch (error) {
@@ -56,18 +81,24 @@ export default function NowPoster({ products = [], shop }) {
       } finally {
         setIsCapturing(false);
       }
-    }, 150); 
+    }, 150);
   };
 
-  if (!products.length) return <div className="poster-page-container">No products available.</div>;
+  if (!availableProducts.length) {
+    return (
+      <div className="poster-page-container">
+        No products available.
+      </div>
+    );
+  }
 
   return (
     <div className="poster-page-container">
-      
+
       {/* --- Poster Preview Section --- */}
       <div className="poster-scale-wrapper">
-        <div 
-          ref={posterRef} 
+        <div
+          ref={posterRef}
           className={`poster-capture-area ${isCapturing ? "capture-mode" : ""}`}
         >
           <div className="poster-internal-frame">
@@ -77,17 +108,21 @@ export default function NowPoster({ products = [], shop }) {
             </header>
 
             <div className="poster-content-list">
-              {products.map((p) =>
+              {availableProducts.map((p) =>
                 selectedProducts[p.id]?.selected ? (
                   <div key={p.id} className="product-item">
                     <div className="product-main-info">
                       <h3 className="product-name">{p.name}</h3>
+
                       {(!p.variants || p.variants.length === 0) && (
                         <span className="product-price">₱{p.price}</span>
                       )}
                     </div>
-                    {p.description && <p className="product-description">{p.description}</p>}
-                    
+
+                    {p.description && (
+                      <p className="product-description">{p.description}</p>
+                    )}
+
                     {p.variants?.length > 0 && (
                       <div className="variant-list">
                         {p.variants.map((v) => (
@@ -106,10 +141,17 @@ export default function NowPoster({ products = [], shop }) {
             <footer className="poster-footer">
               <div className="footer-content">
                 {shop?.image_url && (
-                  <img src={shop.image_url} alt="Logo" className="shop-logo" crossOrigin="anonymous" />
+                  <img
+                    src={shop.image_url}
+                    alt="Logo"
+                    className="shop-logo"
+                    crossOrigin="anonymous"
+                  />
                 )}
                 <div className="footer-shop-info">
-                  <h2 className="footer-shop-name">{shop?.name || "Our Shop"}</h2>
+                  <h2 className="footer-shop-name">
+                    {shop?.name || "Our Shop"}
+                  </h2>
                   <p className="footer-disclaimer">
                     "for more products and advanced orders, please check our app from the link above"
                   </p>
@@ -124,31 +166,48 @@ export default function NowPoster({ products = [], shop }) {
       <div className="controls-container">
         <div className="controls-header">
           <h4 style={{ margin: 0 }}>Select Items</h4>
-          <button onClick={handleDownload} className="download-btn">Download PNG</button>
+          <button onClick={handleDownload} className="download-btn">
+            Download PNG
+          </button>
         </div>
 
         <div className="checklist-sections">
           <div className="checklist-group">
             <p className="group-label">Included</p>
             <div className="checklist-grid">
-              {products.filter(p => selectedProducts[p.id]?.selected).map(p => (
-                <label key={p.id} className="checklist-item checked">
-                  <input type="checkbox" hidden onChange={() => toggleProduct(p.id)} />
-                  <span className="item-text">{p.name}</span>
-                </label>
-              ))}
+              {availableProducts
+                .filter((p) => selectedProducts[p.id]?.selected)
+                .map((p) => (
+                  <label key={p.id} className="checklist-item checked">
+                    <input
+                      type="checkbox"
+                      hidden
+                      onChange={() => toggleProduct(p.id)}
+                    />
+                    <span className="item-text">{p.name}</span>
+                  </label>
+                ))}
             </div>
           </div>
 
-          <div className="checklist-group" style={{ marginTop: '20px' }}>
+          <div
+            className="checklist-group"
+            style={{ marginTop: "20px" }}
+          >
             <p className="group-label">Excluded</p>
             <div className="checklist-grid">
-              {products.filter(p => !selectedProducts[p.id]?.selected).map(p => (
-                <label key={p.id} className="checklist-item">
-                  <input type="checkbox" hidden onChange={() => toggleProduct(p.id)} />
-                  <span className="item-text">{p.name}</span>
-                </label>
-              ))}
+              {availableProducts
+                .filter((p) => !selectedProducts[p.id]?.selected)
+                .map((p) => (
+                  <label key={p.id} className="checklist-item">
+                    <input
+                      type="checkbox"
+                      hidden
+                      onChange={() => toggleProduct(p.id)}
+                    />
+                    <span className="item-text">{p.name}</span>
+                  </label>
+                ))}
             </div>
           </div>
         </div>

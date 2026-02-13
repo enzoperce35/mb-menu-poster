@@ -1,0 +1,19 @@
+{
+  "name": "MB Menu Poster",
+  "short_name": "Menu Poster",
+  "icons": [
+    {
+      "src": "/icons/Menu_Now.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/Menu_Now.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone"
+}

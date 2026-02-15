@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import NowPoster from "./components/posters/NowPoster.jsx";
 import FeaturedPoster from "./components/posters/FeaturedPoster.jsx";
 import CaptionMaker from "./components/posters/CaptionMaker.jsx";
+import ZenMenu from "./components/posters/ZenMenu.jsx"; // Import the new component
 import { fetchProducts } from "./api/products";
 
 export default function App() {
@@ -15,7 +16,7 @@ export default function App() {
       try {
         const data = await fetchProducts(1);
         setGroups(data);
-  
+
         const firstGroupWithProducts = data.find(g => g.products && g.products.length > 0);
         if (firstGroupWithProducts) {
           setShop(firstGroupWithProducts.products[0].shop);
@@ -43,6 +44,9 @@ export default function App() {
   });
   const allUniqueProducts = Object.values(allProductsMap);
 
+  // 3. Filtered Data for ZenMenu (Active & In Stock only)
+  const zenProducts = allUniqueProducts.filter(p => p.active && p.stock > 0);
+
   // Helper function for tab styling
   const getTabStyle = (type) => ({
     padding: "10px 15px",
@@ -58,17 +62,20 @@ export default function App() {
 
   return (
     <div style={{ padding: "20px", backgroundColor: "#f4f4f4", minHeight: "100vh" }}>
-      
+
       {/* --- Navigation Tabs --- */}
-      <div style={{ 
-        marginBottom: "25px", 
-        display: "flex", 
-        justifyContent: "center", 
+      <div style={{
+        marginBottom: "25px",
+        display: "flex",
+        justifyContent: "center",
         gap: "8px",
-        flexWrap: "wrap" 
+        flexWrap: "wrap"
       }}>
+        <button onClick={() => setPosterType("zen")} style={getTabStyle("zen")}>
+          Zen Menu
+        </button>
         <button onClick={() => setPosterType("now")} style={getTabStyle("now")}>
-          Menu Poster
+          Now Poster
         </button>
         <button onClick={() => setPosterType("featured")} style={getTabStyle("featured")}>
           Featured Poster
@@ -83,9 +90,13 @@ export default function App() {
         {posterType === "now" && (
           <NowPoster products={nowGroupProducts} shop={shop} />
         )}
-        
+
         {posterType === "featured" && (
           <FeaturedPoster products={allUniqueProducts} shop={shop} />
+        )}
+
+        {posterType === "zen" && (
+          <ZenMenu groups={groups} shop={shop} />
         )}
 
         {posterType === "caption" && (

@@ -4,8 +4,6 @@ import "./CaptionMaker.css";
 export default function CaptionMaker({ shop }) {
   const [copied, setCopied] = useState(false);
   const shopLink = `https://order-po.netlify.app/products?shop_id=${shop?.id || 1}`;
-  // Your personal Messenger link
-  const messengerLink = `https://m.me/mb.castro.779`;
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -22,17 +20,18 @@ export default function CaptionMaker({ shop }) {
     {
       id: "vibe",
       label: "Social Vibe",
-      text: `${greeting} ✨\n\nOpen po kami today! Ang mga available po ngayon ay nasa image sa ibaba.\n\nMessage nyo lang po kami dito sa Messenger:\n📲 ${messengerLink}\n\nO gamitin ang aming app para sa mas marami pang products:\n🛒 ${shopLink}\n\nThank You!`
+      text: `${greeting} ✨\n\nOpen po kami today. Message nyo lang po kami sa Messenger account namin na MB Castro o gamitin ang aming app:\n\n📲 ${shopLink}\n\nThank You!`
     },
     {
       id: "direct",
       label: "Direct & Clean",
-      text: `${greeting} ✨\n\nHello! Check nyo po ang mga available namin sa ibaba. Marami pa po products sa aming app.\n\nOrder here (Messenger):\n📲 ${messengerLink}\n\nView Menu (App):\n🛒 ${shopLink}\n\nThank You!`
+      text: `${greeting} ✨\n\nHello!, check nyo po mga available namin sa ibaba. Para po sa orders message nyo lang po ang aming Messenger account na MB Castro. Pwede nyo din po gamitin ang aming app:
+\n\n📲 ${shopLink}\n\nThank You!`
     },
     {
       id: "minimal",
       label: "Short / Bio",
-      text: `${greeting} ✨\n\nHi, order na po kayo!\n\nMessenger: ${messengerLink}\nApp: ${shopLink}\n\nThank You!`
+      text: `${greeting} ✨\n\nHi, order na po kayo\n\n📲 ${shopLink}\n\nThank You!`
     }
   ];
 
@@ -76,7 +75,7 @@ export default function CaptionMaker({ shop }) {
       </div>
       
       <p className="caption-footer-hint">
-        💡 FB Tip: Paste this into your post. Both links will become clickable automatically.
+        💡 FB Tip: Paste this into your post. The link becomes clickable automatically.
       </p>
     </div>
   );

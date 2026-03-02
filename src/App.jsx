@@ -3,6 +3,7 @@ import NowPoster from "./components/posters/NowPoster.jsx";
 import FeaturedPoster from "./components/posters/FeaturedPoster.jsx";
 import CaptionMaker from "./components/posters/CaptionMaker.jsx";
 import ZenMenu from "./components/posters/ZenMenu.jsx"; // Import the new component
+import BilaoPoster from "./components/posters/BilaoPoster.jsx";
 import { fetchProducts } from "./api/products";
 
 export default function App() {
@@ -77,6 +78,9 @@ export default function App() {
         <button onClick={() => setPosterType("now")} style={getTabStyle("now")}>
           Now Poster
         </button>
+        <button onClick={() => setPosterType("bilao")} style={getTabStyle("bilao")}>
+          Bilao Poster
+        </button>
         <button onClick={() => setPosterType("featured")} style={getTabStyle("featured")}>
           Featured Poster
         </button>
@@ -89,6 +93,10 @@ export default function App() {
       <div style={{ display: "flex", justifyContent: "center" }}>
         {posterType === "now" && (
           <NowPoster products={nowGroupProducts} shop={shop} />
+        )}
+        
+        {posterType === "bilao" && (
+          <BilaoPoster products={nowGroupProducts} shop={shop} />
         )}
 
         {posterType === "featured" && (

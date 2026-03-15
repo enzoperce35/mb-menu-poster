@@ -7,9 +7,17 @@ export default function NowPoster({ products = [], shop }) {
   const [isCapturing, setIsCapturing] = useState(false);
   const posterRef = useRef();
 
-  // ✅ Only include products with stock > 0
+  // ✅ Only include products with stock > 0 and filter out "extra" variants
   const availableProducts = useMemo(() => {
-    return products.filter((p) => Number(p.stock) > 0);
+    return products
+      .filter((p) => Number(p.stock) > 0)
+      .map((product) => ({
+        ...product,
+        // Filter variants that do NOT start with "extra"
+        variants: product.variants?.filter(
+          (v) => !v.name.toLowerCase().trim().startsWith("extra")
+        ),
+      }));
   }, [products]);
 
   // ✅ Load selection from localStorage
@@ -22,8 +30,6 @@ export default function NowPoster({ products = [], shop }) {
 
     if (savedSelection) {
       const parsed = JSON.parse(savedSelection);
-
-      // Only keep products that are still available
       availableProducts.forEach((p) => {
         initSelection[p.id] = {
           selected: parsed[p.id]?.selected ?? true,
@@ -60,7 +66,6 @@ export default function NowPoster({ products = [], shop }) {
 
   const handleDownload = async () => {
     if (!posterRef.current) return;
-
     setIsCapturing(true);
 
     setTimeout(async () => {
@@ -94,7 +99,6 @@ export default function NowPoster({ products = [], shop }) {
 
   return (
     <div className="poster-page-container">
-
       {/* --- Poster Preview Section --- */}
       <div className="poster-scale-wrapper">
         <div
@@ -113,7 +117,6 @@ export default function NowPoster({ products = [], shop }) {
                   <div key={p.id} className="product-item">
                     <div className="product-main-info">
                       <h3 className="product-name">{p.name}</h3>
-
                       {(!p.variants || p.variants.length === 0) && (
                         <span className="product-price">₱{p.price}</span>
                       )}
@@ -191,10 +194,7 @@ export default function NowPoster({ products = [], shop }) {
             </div>
           </div>
 
-          <div
-            className="checklist-group"
-            style={{ marginTop: "20px" }}
-          >
+          <div className="checklist-group" style={{ marginTop: "20px" }}>
             <p className="group-label">Excluded</p>
             <div className="checklist-grid">
               {availableProducts

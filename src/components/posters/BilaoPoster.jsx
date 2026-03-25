@@ -51,6 +51,11 @@ export default function BilaoPoster({ shop }) {
       { id: 'v25', name: "Medium 50pcs (10-12 pax)", price: "400" },
       { id: 'v26', name: "Large 75pcs (15-18 pax)", price: "600" },
       { id: 'v27', name: "XL 100pcs (20-25 pax)", price: "800" }
+    ]},
+    { id: 'b9', name: "Lumpiang Shanghai", variants: [
+      { id: 'v28', name: "Medium 72pcs", price: "500" },
+      { id: 'v29', name: "Large 108pcs", price: "750" },
+      { id: 'v30', name: "XL 144pcs", price: "1000" },
     ]}
   ];
 

@@ -39,9 +39,12 @@ export default function App() {
   // 2. Data for FeaturedPoster & CaptionMaker (All Products)
   const allProductsMap = {};
   groups.forEach(group => {
-    group.products.forEach(product => {
-      allProductsMap[product.id] = product;
-    });
+    // Check if the group name is NOT "PreOrder" (case-insensitive)
+    if (group.name.toLowerCase() !== "preorder") {
+      group.products.forEach(product => {
+        allProductsMap[product.id] = product;
+      });
+    }
   });
   const allUniqueProducts = Object.values(allProductsMap);
 

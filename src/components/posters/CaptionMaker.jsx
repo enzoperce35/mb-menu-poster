@@ -31,7 +31,7 @@ export default function CaptionMaker({ shop }) {
     {
       id: "minimal",
       label: "Short / Bio",
-      text: `${greeting} ✨\n\nHi, order na po kayo\n\n📲 ${shopLink}\n\nThank You!`
+      text: `📲 ${shopLink}`
     }
   ];
 

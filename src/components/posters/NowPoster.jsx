@@ -13,7 +13,6 @@ export default function NowPoster({ products = [], shop }) {
       .filter((p) => Number(p.stock) > 0)
       .map((product) => ({
         ...product,
-        // Filter variants that do NOT start with "extra"
         variants: product.variants?.filter(
           (v) => !v.name.toLowerCase().trim().startsWith("extra")
         ),
@@ -122,9 +121,7 @@ export default function NowPoster({ products = [], shop }) {
                       )}
                     </div>
 
-                    {p.description && (
-                      <p className="product-description">{p.description}</p>
-                    )}
+                    {/* ✅ Description section removed per request */}
 
                     {p.variants?.length > 0 && (
                       <div className="variant-list">

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import NowPoster from "./components/posters/NowPoster.jsx";
 import FeaturedPoster from "./components/posters/FeaturedPoster.jsx";
 import CaptionMaker from "./components/posters/CaptionMaker.jsx";
-import ZenMenu from "./components/posters/ZenMenu.jsx";
 import BilaoPoster from "./components/posters/BilaoPoster.jsx";
 import CommunityPoster from "./components/posters/CommunityPoster.jsx";
 import { fetchProducts } from "./api/products";
@@ -14,13 +13,12 @@ export default function App() {
   const [posterType, setPosterType] = useState("now");
   const [community, setCommunity] = useState(null);
 
-  // ✅ 1. Load Community Data (Using explicit Rails URL to fix JSON error)
+  // ✅ 1. Load Community Data
   useEffect(() => {
     const loadCommunity = async () => {
       const isDev = process.env.NODE_ENV === 'development';
       const communityId = isDev ? 2 : 1;
       
-      // We use 127.0.0.1:3000 to ensure we hit the Rails API, not the React dev server
       const API_BASE = isDev 
         ? "http://127.0.0.1:3000/api/v1" 
         : "https://your-production-url.com/api/v1";
@@ -69,7 +67,6 @@ export default function App() {
   // ✅ 3. Data Filtering & Logic
   const nowGroupProducts = groups.find((g) => g.name === "Now")?.products || [];
 
-  // Exclude "PreOrder" products for Featured Poster
   const allProductsMap = {};
   groups.forEach(group => {
     if (group.name.toLowerCase() !== "preorder") {
@@ -80,7 +77,6 @@ export default function App() {
   });
   const allUniqueProducts = Object.values(allProductsMap);
 
-  // Helper for tab styling
   const getTabStyle = (type) => ({
     padding: "10px 15px",
     cursor: "pointer",
@@ -104,9 +100,6 @@ export default function App() {
         gap: "8px",
         flexWrap: "wrap"
       }}>
-        <button onClick={() => setPosterType("zen")} style={getTabStyle("zen")}>
-          Zen Menu
-        </button>
         <button onClick={() => setPosterType("now")} style={getTabStyle("now")}>
           Now Poster
         </button>
@@ -136,10 +129,6 @@ export default function App() {
 
         {posterType === "featured" && (
           <FeaturedPoster products={allUniqueProducts} shop={shop} />
-        )}
-
-        {posterType === "zen" && (
-          <ZenMenu groups={groups} shop={shop} />
         )}
 
         {posterType === "caption" && (

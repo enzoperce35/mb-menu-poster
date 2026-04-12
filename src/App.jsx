@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import NowPoster from "./components/posters/NowPoster.jsx";
 import FeaturedPoster from "./components/posters/FeaturedPoster.jsx";
 import CaptionMaker from "./components/posters/CaptionMaker.jsx";
-import ZenMenu from "./components/posters/ZenMenu.jsx"; // Import the new component
+import ZenMenu from "./components/posters/ZenMenu.jsx";
 import BilaoPoster from "./components/posters/BilaoPoster.jsx";
+import CommunityPoster from "./components/posters/CommunityPoster.jsx";
 import { fetchProducts } from "./api/products";
 
 export default function App() {
@@ -11,7 +12,39 @@ export default function App() {
   const [shop, setShop] = useState(null);
   const [loading, setLoading] = useState(true);
   const [posterType, setPosterType] = useState("now");
+  const [community, setCommunity] = useState(null);
 
+  // ✅ 1. Load Community Data (Using explicit Rails URL to fix JSON error)
+  useEffect(() => {
+    const loadCommunity = async () => {
+      const isDev = process.env.NODE_ENV === 'development';
+      const communityId = isDev ? 2 : 1;
+      
+      // We use 127.0.0.1:3000 to ensure we hit the Rails API, not the React dev server
+      const API_BASE = isDev 
+        ? "http://127.0.0.1:3000/api/v1" 
+        : "https://your-production-url.com/api/v1";
+      
+      try {
+        const response = await fetch(`${API_BASE}/communities/${communityId}`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) throw new Error(`Server status: ${response.status}`);
+        
+        const data = await response.json();
+        setCommunity(data);
+      } catch (err) {
+        console.error("Error fetching community:", err);
+      }
+    };
+    loadCommunity();
+  }, []);
+
+  // ✅ 2. Load Shop Products
   useEffect(() => {
     const load = async () => {
       try {
@@ -33,13 +66,12 @@ export default function App() {
 
   if (loading) return <div style={{ padding: "40px", textAlign: "center" }}>Loading menu...</div>;
 
-  // 1. Data for NowPoster
+  // ✅ 3. Data Filtering & Logic
   const nowGroupProducts = groups.find((g) => g.name === "Now")?.products || [];
 
-  // 2. Data for FeaturedPoster & CaptionMaker (All Products)
+  // Exclude "PreOrder" products for Featured Poster
   const allProductsMap = {};
   groups.forEach(group => {
-    // Check if the group name is NOT "PreOrder" (case-insensitive)
     if (group.name.toLowerCase() !== "preorder") {
       group.products.forEach(product => {
         allProductsMap[product.id] = product;
@@ -48,10 +80,7 @@ export default function App() {
   });
   const allUniqueProducts = Object.values(allProductsMap);
 
-  // 3. Filtered Data for ZenMenu (Active & In Stock only)
-  const zenProducts = allUniqueProducts.filter(p => p.active && p.stock > 0);
-
-  // Helper function for tab styling
+  // Helper for tab styling
   const getTabStyle = (type) => ({
     padding: "10px 15px",
     cursor: "pointer",
@@ -59,7 +88,7 @@ export default function App() {
     color: posterType === type ? "#fff" : "#000",
     border: "1px solid #000",
     borderRadius: "4px",
-    fontSize: "13px",
+    fontSize: "12px",
     fontWeight: "600",
     transition: "all 0.2s ease"
   });
@@ -81,6 +110,9 @@ export default function App() {
         <button onClick={() => setPosterType("now")} style={getTabStyle("now")}>
           Now Poster
         </button>
+        <button onClick={() => setPosterType("community")} style={getTabStyle("community")}>
+          Community Poster
+        </button>
         <button onClick={() => setPosterType("bilao")} style={getTabStyle("bilao")}>
           Bilao Poster
         </button>
@@ -92,12 +124,12 @@ export default function App() {
         </button>
       </div>
 
-      {/* --- Component Views --- */}
+      {/* --- Main View --- */}
       <div style={{ display: "flex", justifyContent: "center" }}>
         {posterType === "now" && (
           <NowPoster products={nowGroupProducts} shop={shop} />
         )}
-        
+
         {posterType === "bilao" && (
           <BilaoPoster products={nowGroupProducts} shop={shop} />
         )}
@@ -112,6 +144,10 @@ export default function App() {
 
         {posterType === "caption" && (
           <CaptionMaker shop={shop} />
+        )}
+
+        {posterType === "community" && (
+          <CommunityPoster community={community} />
         )}
       </div>
     </div>

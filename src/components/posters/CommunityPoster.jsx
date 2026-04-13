@@ -1,12 +1,12 @@
 import React, { useState, useRef, useMemo } from "react";
 import html2canvas from "html2canvas";
-import "./CommunityPoster.css"; // Ensure you add the masonry CSS below
+import InitialsLogo from "../../utils/InitialsLogo";
+import "./CommunityPoster.css";
 
 export default function CommunityPoster({ community }) {
   const [isCapturing, setIsCapturing] = useState(false);
   const posterRef = useRef();
 
-  // 1. FILTER LOGIC: Strict check for Featured, Image, and Active status
   const featuredProducts = useMemo(() => {
     if (!community?.shops) return [];
     
@@ -27,7 +27,11 @@ export default function CommunityPoster({ community }) {
           }
 
           if (isFeatured && hasImage && isActive) {
-            allFeatured.push({ ...p, shopName: shop.name });
+            allFeatured.push({ 
+              ...p, 
+              shopName: shop.name,
+              shopLogo: shop.image_url // Assuming shop.image_url is the logo
+            });
           }
         });
       }
@@ -39,15 +43,14 @@ export default function CommunityPoster({ community }) {
     if (!posterRef.current) return;
     setIsCapturing(true);
     
-    // Slight delay to ensure capture-mode styles (like hiding buttons) apply
     setTimeout(async () => {
       const canvas = await html2canvas(posterRef.current, { 
-        scale: 4, // High quality for Facebook
+        scale: 4, 
         useCORS: true,
         backgroundColor: "#ffffff"
       });
       const link = document.createElement("a");
-      link.download = `Artistic_Community_${community?.name}.png`;
+      link.download = `Community_Favorites_${community?.name}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
       setIsCapturing(false);
@@ -62,7 +65,7 @@ export default function CommunityPoster({ community }) {
         <div ref={posterRef} className={`poster-capture-area ${isCapturing ? "capture-mode" : ""}`}>
           <div className="poster-internal-frame" style={{ border: 'none', background: '#fff' }}>
             
-            <header className="poster-header" style={{ textAlign: 'center', marginBottom: '20px' }}>
+            <header className="poster-header">
               <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '3px', color: '#d4af37' }}>
                 {community.area}
               </p>
@@ -72,7 +75,6 @@ export default function CommunityPoster({ community }) {
               <div style={{ width: '40px', height: '2px', background: '#d4af37', margin: '10px auto' }}></div>
             </header>
 
-            {/* --- Masonry Collage Layout --- */}
             <div className="collage-masonry">
               {featuredProducts.length > 0 ? (
                 featuredProducts.map((p) => (
@@ -82,6 +84,16 @@ export default function CommunityPoster({ community }) {
                       alt={p.name}
                       className="collage-image"
                     />
+
+                    {/* ✅ SHOP BADGE: Image or Initials Fallback */}
+                    <div className="shop-badge-overlay">
+                      {p.shopLogo ? (
+                        <img src={p.shopLogo} alt={p.shopName} className="shop-badge-img" />
+                      ) : (
+                        <InitialsLogo name={p.shopName} size={24} />
+                      )}
+                    </div>
+
                     <div className="collage-overlay">
                       <span className="collage-price">₱{p.price}</span>
                     </div>
@@ -94,8 +106,8 @@ export default function CommunityPoster({ community }) {
               )}
             </div>
 
-            <footer className="poster-footer" style={{ marginTop: '30px', textAlign: 'center' }}>
-               <div style={{ background: '#f9f9f9', padding: '15px', borderRadius: '12px' }}>
+            <footer className="poster-footer">
+               <div className="app-link-box">
                   <p style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 5px 0' }}>📲 Order po kayo dito:</p>
                   <code style={{ color: '#d4af37', fontSize: '11px' }}>
                     order-po.netlify.app/?community={community.id}

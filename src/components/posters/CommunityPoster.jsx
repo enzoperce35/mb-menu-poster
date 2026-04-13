@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useEffect } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import html2canvas from "html2canvas";
 import InitialsLogo from "../../utils/InitialsLogo";
 import "./CommunityPoster.css";
@@ -7,17 +7,14 @@ export default function CommunityPoster({ community }) {
   const [isCapturing, setIsCapturing] = useState(false);
   const posterRef = useRef();
 
-  // 1. FILTER LOGIC: Now correctly passing the logo/name to the item
   const featuredProducts = useMemo(() => {
     if (!community?.shops) return [];
-    
     const allFeatured = [];
     community.shops.forEach(shop => {
       if (shop.products) {
         shop.products.forEach(p => {
           const isFeatured = p.featured === true;
           const hasImage = p.image_url && p.image_url.trim() !== "";
-
           let isActive = false;
           const hasVariants = p.variants && p.variants.length > 0;
 
@@ -31,7 +28,7 @@ export default function CommunityPoster({ community }) {
             allFeatured.push({ 
               ...p, 
               shopName: shop.name,
-              shopLogo: shop.image_url // ✅ FIX: Added this so production sees the logo
+              shopLogo: shop.image_url 
             });
           }
         });
@@ -52,7 +49,7 @@ export default function CommunityPoster({ community }) {
           backgroundColor: "#ffffff"
         });
         const link = document.createElement("a");
-        link.download = `Artistic_Community_${community?.name}.png`;
+        link.download = `Community_Favorites_${community?.name}.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
       } catch (error) {
@@ -63,69 +60,48 @@ export default function CommunityPoster({ community }) {
     }, 150);
   };
 
-  if (!community) {
-    return (
-      <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>
-        Loading Community Favorites...
-      </div>
-    );
-  }
+  if (!community) return <div className="cp-loading">Loading Community Favorites...</div>;
 
   return (
-    <div className="poster-page-container">
-      <div className="poster-scale-wrapper">
-        <div ref={posterRef} className={`poster-capture-area ${isCapturing ? "capture-mode" : ""}`}>
-          <div className="poster-internal-frame" style={{ border: 'none', background: '#fff' }}>
+    <div className="cp-page-container">
+      <div className="cp-scale-wrapper">
+        <div ref={posterRef} className={`cp-capture-area ${isCapturing ? "cp-capturing" : ""}`}>
+          <div className="cp-internal-frame">
             
-            <header className="poster-header" style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '3px', color: '#d4af37', margin: 0 }}>
-                {community.area}
-              </p>
-              <h1 style={{ fontFamily: 'serif', fontSize: '32px', margin: '5px 0', color: '#1a1a1a' }}>
-                Community Favorites
-              </h1>
-              <div style={{ width: '40px', height: '2px', background: '#d4af37', margin: '10px auto' }}></div>
+            <header className="cp-header">
+              <p className="cp-area-tag">{community.area}</p>
+              <h1 className="cp-main-title">Community Favorites</h1>
+              <div className="cp-divider"></div>
             </header>
 
-            <div className="collage-masonry">
+            <div className="cp-masonry-grid">
               {featuredProducts.length > 0 ? (
                 featuredProducts.map((p) => (
-                  <div key={p.id} className="collage-item">
-                    <img 
-                      src={p.image_url} 
-                      alt={p.name}
-                      className="collage-image"
-                    />
+                  <div key={p.id} className="cp-collage-item">
+                    <img src={p.image_url} alt={p.name} className="cp-item-image" />
 
-                    {/* ✅ SHOP BADGE: Fallback now works because p.shopLogo is defined */}
-                    <div className="shop-badge-overlay" style={{ position: 'absolute', top: '6px', left: '6px', zIndex: 10 }}>
+                    <div className="cp-shop-badge">
                       {p.shopLogo ? (
-                        <img 
-                          src={p.shopLogo} 
-                          alt={p.shopName} 
-                          style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid white' }} 
-                        />
+                        <img src={p.shopLogo} alt={p.shopName} className="cp-badge-img" />
                       ) : (
                         <InitialsLogo name={p.shopName} size={24} />
                       )}
                     </div>
 
-                    <div className="collage-overlay">
-                      <span className="collage-price">₱{p.price}</span>
+                    <div className="cp-price-tag">
+                      <span>₱{p.price}</span>
                     </div>
                   </div>
                 ))
               ) : (
-                <p style={{ textAlign: 'center', color: '#999', padding: '40px', width: '100%' }}>
-                  No featured items available in this community.
-                </p>
+                <p className="cp-no-data">No featured items available.</p>
               )}
             </div>
 
-            <footer className="poster-footer" style={{ marginTop: '30px', textAlign: 'center' }}>
-               <div style={{ background: '#f9f9f9', padding: '15px', borderRadius: '12px' }}>
-                  <p style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 5px 0' }}>📲 Order po kayo dito:</p>
-                  <code style={{ color: '#d4af37', fontSize: '11px' }}>
+            <footer className="cp-footer">
+               <div className="cp-link-box">
+                  <p className="cp-order-text">📲 Order po kayo dito:</p>
+                  <code className="cp-app-url">
                     order-po.netlify.app/?community={community.id}
                   </code>
                </div>
@@ -134,7 +110,7 @@ export default function CommunityPoster({ community }) {
         </div>
       </div>
 
-      <button onClick={handleDownload} className="download-btn">
+      <button onClick={handleDownload} className="cp-download-btn">
         Download Artistic Poster
       </button>
     </div>

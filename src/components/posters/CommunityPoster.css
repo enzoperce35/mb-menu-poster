@@ -1,118 +1,147 @@
-/* 1. The main capture area - FORCING edge-to-edge */
-.poster-capture-area {
+/* Unique prefix 'cp-' prevents conflicts with other poster styles */
+
+.cp-page-container {
+    padding-bottom: 50px;
+}
+
+.cp-capture-area {
   background: #ffffff !important;
-  padding: 10px 0 !important; /* Zero side padding */
-  width: 100vw !important;    /* Force full viewport width */
+  padding: 15px 0 !important;
+  width: 100vw !important;    
   max-width: 100% !important;
   margin: 0 auto !important;
   box-sizing: border-box !important;
-  overflow: hidden;
 }
 
-/* 2. Internal frame - tiny buffer so images don't hit the screen edge */
-.poster-internal-frame {
+.cp-internal-frame {
   width: 100% !important;
-  padding: 0 4px !important; 
+  padding: 0 6px !important; 
   box-sizing: border-box;
 }
 
-/* 3. Header & Branding */
-.poster-header {
+.cp-header {
   text-align: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
-.poster-header h1 {
+.cp-area-tag {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #d4af37;
+  margin: 0;
+}
+
+.cp-main-title {
   font-family: serif;
-  font-size: 28px;
+  font-size: 30px;
   margin: 5px 0;
   color: #1a1a1a;
 }
 
-.poster-divider {
+.cp-divider {
   width: 40px;
   height: 2px;
   background: #d4af37;
   margin: 10px auto;
 }
 
-/* 4. THE MASONRY FIX: Using Columns to fill all gaps while keeping full width */
-.collage-masonry {
+/* Namespaced Masonry Logic */
+.cp-masonry-grid {
   column-count: 3; 
-  column-gap: 6px; 
+  column-gap: 8px; 
   width: 100% !important;
-  margin: 0 !important;
-  display: block !important; /* Columns work best on block, not grid */
+  display: block !important;
 }
 
-/* 5. Individual Product Item */
-.collage-item {
+.cp-collage-item {
   display: inline-block; 
   width: 100%;
-  margin-bottom: 6px; /* Vertical gap between images */
+  margin-bottom: 8px;
   position: relative;
   border-radius: 8px; 
   overflow: hidden;
   break-inside: avoid; 
-  background: #f9f9f9;
+  background: #fdfdfd;
 }
 
-/* 6. Image Handling - Natural Heights fill the "holes" */
-.collage-image {
+.cp-item-image {
   width: 100%;
   height: auto; 
   display: block;
 }
 
-/* 7. Price Overlay - Matching your screenshot */
-.collage-overlay {
+.cp-shop-badge {
   position: absolute;
-  bottom: 6px;
-  right: 6px;
-  background: rgba(0, 0, 0, 0.7);
+  top: 8px;
+  left: 8px;
+  z-index: 5;
+}
+
+.cp-badge-img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.cp-price-tag {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.75);
   color: #fff;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 3px 8px;
+  border-radius: 5px;
   font-size: 11px;
   font-weight: bold;
 }
 
-/* Positioning the badge on the product image */
-.shop-badge-overlay {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Style for when the shop has a logo image */
-.shop-badge-img {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1.5px solid white;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-/* 8. Footer Branding */
-.poster-footer {
-  margin-top: 15px;
+.cp-footer {
+  margin-top: 25px;
   padding: 0 10px;
   text-align: center;
 }
 
-.app-link-box {
+.cp-link-box {
   background: #f9f9f9;
-  padding: 15px;
-  border-radius: 12px;
+  padding: 18px;
+  border-radius: 15px;
 }
 
-/* Hide UI elements during download */
-.capture-mode .download-btn {
+.cp-order-text {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+}
+
+.cp-app-url {
+  color: #d4af37;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cp-download-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 24px;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Hide button during capture */
+.cp-capturing .cp-download-btn {
   display: none;
+}
+
+.cp-loading, .cp-no-data {
+    padding: 40px;
+    text-align: center;
+    color: #888;
 }

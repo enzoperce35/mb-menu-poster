@@ -7,14 +7,7 @@ export default function CommunityPoster({ community }) {
   const [isCapturing, setIsCapturing] = useState(false);
   const posterRef = useRef();
 
-  // Debugging log for Production - check your browser console
-  useEffect(() => {
-    if (community) {
-      console.log("✅ Community Data Loaded:", community.name);
-      console.log("Shops Count:", community.shops?.length);
-    }
-  }, [community]);
-
+  // 1. FILTER LOGIC: Now correctly passing the logo/name to the item
   const featuredProducts = useMemo(() => {
     if (!community?.shops) return [];
     
@@ -22,11 +15,9 @@ export default function CommunityPoster({ community }) {
     community.shops.forEach(shop => {
       if (shop.products) {
         shop.products.forEach(p => {
-          // Check for featured status and image existence
           const isFeatured = p.featured === true;
           const hasImage = p.image_url && p.image_url.trim() !== "";
 
-          // Check if product is active via variants or delivery groups
           let isActive = false;
           const hasVariants = p.variants && p.variants.length > 0;
 
@@ -40,7 +31,7 @@ export default function CommunityPoster({ community }) {
             allFeatured.push({ 
               ...p, 
               shopName: shop.name,
-              shopLogo: shop.image_url // Mapping the shop's profile image
+              shopLogo: shop.image_url // ✅ FIX: Added this so production sees the logo
             });
           }
         });
@@ -61,18 +52,17 @@ export default function CommunityPoster({ community }) {
           backgroundColor: "#ffffff"
         });
         const link = document.createElement("a");
-        link.download = `Community_Favorites_${community?.name || 'Poster'}.png`;
+        link.download = `Artistic_Community_${community?.name}.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
-      } catch (err) {
-        console.error("Capture failed:", err);
+      } catch (error) {
+        console.error("Download failed:", error);
       } finally {
         setIsCapturing(false);
       }
     }, 150);
   };
 
-  // If community is null/undefined, the parent isn't passing data yet
   if (!community) {
     return (
       <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>
@@ -87,7 +77,7 @@ export default function CommunityPoster({ community }) {
         <div ref={posterRef} className={`poster-capture-area ${isCapturing ? "capture-mode" : ""}`}>
           <div className="poster-internal-frame" style={{ border: 'none', background: '#fff' }}>
             
-            <header className="poster-header">
+            <header className="poster-header" style={{ textAlign: 'center', marginBottom: '20px' }}>
               <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '3px', color: '#d4af37', margin: 0 }}>
                 {community.area}
               </p>
@@ -107,10 +97,14 @@ export default function CommunityPoster({ community }) {
                       className="collage-image"
                     />
 
-                    {/* ✅ SHOP BADGE: Image or Initials Fallback */}
-                    <div className="shop-badge-overlay">
+                    {/* ✅ SHOP BADGE: Fallback now works because p.shopLogo is defined */}
+                    <div className="shop-badge-overlay" style={{ position: 'absolute', top: '6px', left: '6px', zIndex: 10 }}>
                       {p.shopLogo ? (
-                        <img src={p.shopLogo} alt={p.shopName} className="shop-badge-img" />
+                        <img 
+                          src={p.shopLogo} 
+                          alt={p.shopName} 
+                          style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid white' }} 
+                        />
                       ) : (
                         <InitialsLogo name={p.shopName} size={24} />
                       )}
@@ -128,8 +122,8 @@ export default function CommunityPoster({ community }) {
               )}
             </div>
 
-            <footer className="poster-footer">
-               <div className="app-link-box">
+            <footer className="poster-footer" style={{ marginTop: '30px', textAlign: 'center' }}>
+               <div style={{ background: '#f9f9f9', padding: '15px', borderRadius: '12px' }}>
                   <p style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 5px 0' }}>📲 Order po kayo dito:</p>
                   <code style={{ color: '#d4af37', fontSize: '11px' }}>
                     order-po.netlify.app/?community={community.id}

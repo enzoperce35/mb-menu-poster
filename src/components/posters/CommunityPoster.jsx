@@ -7,14 +7,7 @@ export default function CommunityPoster({ community }) {
   const [isCapturing, setIsCapturing] = useState(false);
   const posterRef = useRef();
 
-  // Debugging log for Production - check your browser console
-  useEffect(() => {
-    if (community) {
-      console.log("✅ Community Data Loaded:", community.name);
-      console.log("Shops Count:", community.shops?.length);
-    }
-  }, [community]);
-
+  // 1. FILTER LOGIC: Strict check for Featured, Image, and Active status
   const featuredProducts = useMemo(() => {
     if (!community?.shops) return [];
     
@@ -37,11 +30,7 @@ export default function CommunityPoster({ community }) {
           }
 
           if (isFeatured && hasImage && isActive) {
-            allFeatured.push({ 
-              ...p, 
-              shopName: shop.name,
-              shopLogo: shop.image_url // Mapping the shop's profile image
-            });
+            allFeatured.push({ ...p, shopName: shop.name });
           }
         });
       }
@@ -54,21 +43,16 @@ export default function CommunityPoster({ community }) {
     setIsCapturing(true);
     
     setTimeout(async () => {
-      try {
-        const canvas = await html2canvas(posterRef.current, { 
-          scale: 4, 
-          useCORS: true,
-          backgroundColor: "#ffffff"
-        });
-        const link = document.createElement("a");
-        link.download = `Community_Favorites_${community?.name || 'Poster'}.png`;
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-      } catch (err) {
-        console.error("Capture failed:", err);
-      } finally {
-        setIsCapturing(false);
-      }
+      const canvas = await html2canvas(posterRef.current, { 
+        scale: 4, // High quality for Facebook
+        useCORS: true,
+        backgroundColor: "#ffffff"
+      });
+      const link = document.createElement("a");
+      link.download = `Artistic_Community_${community?.name}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      setIsCapturing(false);
     }, 150);
   };
 
@@ -87,8 +71,8 @@ export default function CommunityPoster({ community }) {
         <div ref={posterRef} className={`poster-capture-area ${isCapturing ? "capture-mode" : ""}`}>
           <div className="poster-internal-frame" style={{ border: 'none', background: '#fff' }}>
             
-            <header className="poster-header">
-              <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '3px', color: '#d4af37', margin: 0 }}>
+            <header className="poster-header" style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '3px', color: '#d4af37' }}>
                 {community.area}
               </p>
               <h1 style={{ fontFamily: 'serif', fontSize: '32px', margin: '5px 0', color: '#1a1a1a' }}>

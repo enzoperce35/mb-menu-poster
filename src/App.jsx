@@ -21,7 +21,7 @@ export default function App() {
       
       const API_BASE = isDev 
         ? "http://127.0.0.1:3000/api/v1" 
-        : "https://your-production-url.com/api/v1";
+        : "https://mb-menu-poster.netlify.app//api/v1";
       
       try {
         const response = await fetch(`${API_BASE}/communities/${communityId}`, {

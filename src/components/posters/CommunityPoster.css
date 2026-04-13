@@ -77,6 +77,28 @@
   font-weight: bold;
 }
 
+/* Positioning the badge on the product image */
+.shop-badge-overlay {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Style for when the shop has a logo image */
+.shop-badge-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid white;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
 /* 8. Footer Branding */
 .poster-footer {
   margin-top: 15px;

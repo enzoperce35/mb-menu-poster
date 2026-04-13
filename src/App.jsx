@@ -18,11 +18,12 @@ export default function App() {
     const loadCommunity = async () => {
       const isDev = process.env.NODE_ENV === 'development';
       const communityId = isDev ? 2 : 1;
-      
-      const API_BASE = isDev 
-        ? "http://127.0.0.1:3000/api/v1" 
-        : "https://mb-menu-poster.netlify.app/api/v1";
-      
+
+      // REPLACE 'your-app-name' with your actual Render project name
+      const API_BASE = isDev
+        ? "http://127.0.0.1:3000/api/v1"
+        : "https://servewise-market-backend.onrender.com/api/v1";
+
       try {
         const response = await fetch(`${API_BASE}/communities/${communityId}`, {
           headers: {
@@ -32,7 +33,7 @@ export default function App() {
         });
 
         if (!response.ok) throw new Error(`Server status: ${response.status}`);
-        
+
         const data = await response.json();
         setCommunity(data);
       } catch (err) {

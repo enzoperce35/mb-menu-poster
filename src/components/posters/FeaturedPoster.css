@@ -16,27 +16,29 @@
 }
 
 /* Artistic Masonry Layout */
+/* FORCE the same behavior as old CommunityPoster */
 .collage-masonry {
-  column-count: 2;
-  column-gap: 15px;
+  column-count: 3;
+  column-gap: 6px;
   width: 100%;
+  display: block;
 }
 
 .collage-item {
-  break-inside: avoid;
-  margin-bottom: 15px;
+  display: inline-block;   /* 🔥 THIS was the missing magic */
+  width: 100%;
+  margin-bottom: 6px;
+  position: relative;
+  border-radius: 8px;
   overflow: hidden;
-  border-radius: 4px; /* Slight rounding for softness */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Very subtle lift */
-  transition: transform 0.3s ease;
+  break-inside: avoid;
+  background: #f9f9f9;
 }
 
 .collage-image {
   width: 100%;
+  height: auto;            /* 🔥 critical for masonry fill */
   display: block;
-  object-fit: cover;
-  /* We remove fixed aspect-ratio to allow natural photo shapes */
-  filter: contrast(1.02) saturate(1.1); /* Subtle artistic pop */
 }
 
 /* Checklist Controls Section */

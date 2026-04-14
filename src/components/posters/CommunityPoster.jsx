@@ -9,32 +9,48 @@ export default function CommunityPoster({ community }) {
 
   const featuredProducts = useMemo(() => {
     if (!community?.shops) return [];
-    const allFeatured = [];
-    community.shops.forEach(shop => {
-      if (shop.products) {
-        shop.products.forEach(p => {
+    
+    // 1. Group products by shop first
+    const shopBuckets = community.shops.map(shop => {
+      const validProducts = (shop.products || [])
+        .filter(p => {
           const isFeatured = p.featured === true;
           const hasImage = p.image_url && p.image_url.trim() !== "";
-          let isActive = false;
           const hasVariants = p.variants && p.variants.length > 0;
+          const isActive = hasVariants 
+            ? p.variants.some(v => v.active === true)
+            : p.product_delivery_groups?.some(dg => dg.active === true);
+          
+          return isFeatured && hasImage && isActive;
+        })
+        .map(p => ({
+          ...p,
+          shopName: shop.name,
+          shopLogo: shop.image_url
+        }));
 
-          if (hasVariants) {
-            isActive = p.variants.some(v => v.active === true);
-          } else {
-            isActive = p.product_delivery_groups?.some(dg => dg.active === true);
-          }
-
-          if (isFeatured && hasImage && isActive) {
-            allFeatured.push({ 
-              ...p, 
-              shopName: shop.name,
-              shopLogo: shop.image_url 
-            });
-          }
-        });
-      }
+      // Shuffle individual shop products so their "first" item isn't always the same one
+      return validProducts.sort(() => Math.random() - 0.5);
     });
-    return allFeatured;
+
+    // 2. Round Robin selection (Ensures all shops get 1 entry, then 2, etc.)
+    const combined = [];
+    let hasMore = true;
+    let layer = 0;
+
+    while (hasMore && combined.length < 20) {
+      hasMore = false;
+      for (const bucket of shopBuckets) {
+        if (bucket[layer] && combined.length < 20) {
+          combined.push(bucket[layer]);
+          hasMore = true;
+        }
+      }
+      layer++;
+    }
+
+    // 3. Final shuffle of the 20 items so they are mixed on the poster
+    return combined.sort(() => Math.random() - 0.5);
   }, [community]);
 
   const handleDownload = async () => {

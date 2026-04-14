@@ -100,9 +100,9 @@ export default function CommunityPoster({ community }) {
 
             <footer className="cp-footer">
                <div className="cp-link-box">
-                  <p className="cp-order-text">📲 Order po kayo dito:</p>
+                  <p className="cp-order-text">Order na po kayo!</p>
                   <code className="cp-app-url">
-                    order-po.netlify.app/?community={community.id}
+                    📲 Click nyo lang po  ang link sa caption
                   </code>
                </div>
             </footer>

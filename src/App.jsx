@@ -104,14 +104,14 @@ export default function App() {
         <button onClick={() => setPosterType("now")} style={getTabStyle("now")}>
           Now Poster
         </button>
-        <button onClick={() => setPosterType("community")} style={getTabStyle("community")}>
-          Community Poster
-        </button>
         <button onClick={() => setPosterType("bilao")} style={getTabStyle("bilao")}>
           Bilao Poster
         </button>
         <button onClick={() => setPosterType("featured")} style={getTabStyle("featured")}>
           Featured Poster
+        </button>
+        <button onClick={() => setPosterType("community")} style={getTabStyle("community")}>
+          Community Poster
         </button>
         <button onClick={() => setPosterType("caption")} style={getTabStyle("caption")}>
           Caption Maker

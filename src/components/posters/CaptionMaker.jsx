@@ -4,6 +4,7 @@ import "./CaptionMaker.css";
 export default function CaptionMaker({ shop }) {
   const [copied, setCopied] = useState(false);
   const shopLink = `https://order-po.netlify.app/products?shop_id=${shop?.id || 1}`;
+  const communityLink = `https://order-po.netlify.app/products?view=shops&community_id=1`;
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -24,15 +25,14 @@ export default function CaptionMaker({ shop }) {
     },
     {
       id: "direct",
-      label: "Direct & Clean",
-      text: `${greeting} ✨\n\nHello!, check nyo po mga available namin sa ibaba. Para po sa orders message nyo lang po ang aming Messenger account na MB Castro. Pwede nyo din po gamitin ang aming app:
-\n\n📲 ${shopLink}\n\nThank You!`
+      label: "MB Castro Link",
+      text: `📲 ${shopLink}`
     },
     {
       id: "minimal",
-      label: "Short / Bio",
-      text: `📲 ${shopLink}`
-    }
+      label: "Homes-West Link",
+      text: `📲 ${communityLink}`
+    },
   ];
 
   const [activeTemplate, setActiveTemplate] = useState(templates[0]);

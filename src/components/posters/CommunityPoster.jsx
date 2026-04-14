@@ -84,7 +84,7 @@ export default function CommunityPoster({ community }) {
                       {p.shopLogo ? (
                         <img src={p.shopLogo} alt={p.shopName} className="cp-badge-img" />
                       ) : (
-                        <InitialsLogo name={p.shopName} size={24} />
+                        <InitialsLogo name={p.shopName} size={30} />
                       )}
                     </div>
 

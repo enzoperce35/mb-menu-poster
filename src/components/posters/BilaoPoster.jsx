@@ -30,10 +30,10 @@ export default function BilaoPoster({ shop }) {
       { id: 'v12', name: "XL (20 pax)", price: "1050" }
     ]},
     { id: 'b5', name: "Puto", variants: [
-      { id: 'v13', name: "Small 25pcs (10-12 pax)", price: "200" },
-      { id: 'v14', name: "Medium 40pcs (20-25 pax)", price: "300" },
-      { id: 'v15', name: "Large 50pcs (25-30 pax)", price: "370" },
-      { id: 'v16', name: "XL 75pcs (30-40 pax)", price: "550" }
+      { id: 'v13', name: "Small 15pcs (5-7 pax)", price: "135" },
+      { id: 'v14', name: "Medium 35pcs (15-20 pax)", price: "300" },
+      { id: 'v15', name: "Large 50pcs (25-30 pax)", price: "400" },
+      { id: 'v16', name: "XL 70pcs (30-40 pax)", price: "550" }
     ]},
     { id: 'b6', name: "Chicken Fillet", variants: [
       { id: 'v17', name: "Small (5-7 pax)", price: "320" },

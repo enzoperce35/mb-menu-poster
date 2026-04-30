@@ -4,6 +4,7 @@ import FeaturedPoster from "./components/posters/FeaturedPoster.jsx";
 import CaptionMaker from "./components/posters/CaptionMaker.jsx";
 import BilaoPoster from "./components/posters/BilaoPoster.jsx";
 import CommunityPoster from "./components/posters/CommunityPoster.jsx";
+import BundlesPoster from "./components/posters/BundlesPoster.jsx"; // ✅ New Import
 import { fetchProducts } from "./api/products";
 
 export default function App() {
@@ -19,7 +20,6 @@ export default function App() {
       const isDev = process.env.NODE_ENV === 'development';
       const communityId = isDev ? 2 : 1;
 
-      // REPLACE 'your-app-name' with your actual Render project name
       const API_BASE = isDev
         ? "http://127.0.0.1:3000/api/v1"
         : "https://servewise-market-backend.onrender.com/api/v1";
@@ -110,6 +110,9 @@ export default function App() {
         <button onClick={() => setPosterType("featured")} style={getTabStyle("featured")}>
           Featured Poster
         </button>
+        <button onClick={() => setPosterType("bundles")} style={getTabStyle("bundles")}>
+          Bundles Poster
+        </button> {/* ✅ New Button */}
         <button onClick={() => setPosterType("community")} style={getTabStyle("community")}>
           Community Poster
         </button>
@@ -131,6 +134,10 @@ export default function App() {
         {posterType === "featured" && (
           <FeaturedPoster products={allUniqueProducts} shop={shop} />
         )}
+
+        {posterType === "bundles" && (
+          <BundlesPoster />
+        )} {/* ✅ New Render Condition */}
 
         {posterType === "caption" && (
           <CaptionMaker shop={shop} />

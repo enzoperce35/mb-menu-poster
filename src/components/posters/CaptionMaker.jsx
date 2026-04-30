@@ -3,6 +3,7 @@ import "./CaptionMaker.css";
 
 export default function CaptionMaker({ shop }) {
   const [copied, setCopied] = useState(false);
+  const mbBundlesLink = `https://mb-bundles.netlify.app`;
   const shopLink = `https://order-po.netlify.app/products?shop_id=${shop?.id || 1}`;
   const communityLink = `https://order-po.netlify.app/products?view=shops&community_id=1`;
 
@@ -20,8 +21,8 @@ export default function CaptionMaker({ shop }) {
   const templates = [
     {
       id: "vibe",
-      label: "Social Vibe",
-      text: `${greeting} ✨\n\nOpen po kami today. Message nyo lang po kami sa Messenger account namin na MB Castro o gamitin ang aming app:\n\n📲 ${shopLink}\n\nThank You!`
+      label: "MB Bundles Link",
+      text: `📲 ${mbBundlesLink}`
     },
     {
       id: "direct",

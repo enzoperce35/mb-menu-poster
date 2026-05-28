@@ -3,8 +3,8 @@ import NowPoster from "./components/posters/NowPoster.jsx";
 import FeaturedPoster from "./components/posters/FeaturedPoster.jsx";
 import CaptionMaker from "./components/posters/CaptionMaker.jsx";
 import BilaoPoster from "./components/posters/BilaoPoster.jsx";
-import CommunityPoster from "./components/posters/CommunityPoster.jsx";
-import BundlesPoster from "./components/posters/BundlesPoster.jsx"; // ✅ New Import
+import QRPoster from "./components/posters/QRPoster.jsx";
+import BundlesPoster from "./components/posters/BundlesPoster.jsx";
 import { fetchProducts } from "./api/products";
 
 export default function App() {
@@ -113,8 +113,8 @@ export default function App() {
         <button onClick={() => setPosterType("bundles")} style={getTabStyle("bundles")}>
           Bundles Poster
         </button> {/* ✅ New Button */}
-        <button onClick={() => setPosterType("community")} style={getTabStyle("community")}>
-          Community Poster
+        <button onClick={() => setPosterType("qr")} style={getTabStyle("qr")}>
+          QR Poster
         </button>
         <button onClick={() => setPosterType("caption")} style={getTabStyle("caption")}>
           Caption Maker
@@ -143,8 +143,8 @@ export default function App() {
           <CaptionMaker shop={shop} />
         )}
 
-        {posterType === "community" && (
-          <CommunityPoster community={community} />
+        {posterType === "qr" && (
+          <QRPoster />
         )}
       </div>
     </div>

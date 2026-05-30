@@ -12,36 +12,6 @@ export default function App() {
   const [shop, setShop] = useState(null);
   const [loading, setLoading] = useState(true);
   const [posterType, setPosterType] = useState("now");
-  const [community, setCommunity] = useState(null);
-
-  // ✅ 1. Load Community Data
-  useEffect(() => {
-    const loadCommunity = async () => {
-      const isDev = process.env.NODE_ENV === 'development';
-      const communityId = isDev ? 2 : 1;
-
-      const API_BASE = isDev
-        ? "http://127.0.0.1:3000/api/v1"
-        : "https://servewise-market-backend.onrender.com/api/v1";
-
-      try {
-        const response = await fetch(`${API_BASE}/communities/${communityId}`, {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) throw new Error(`Server status: ${response.status}`);
-
-        const data = await response.json();
-        setCommunity(data);
-      } catch (err) {
-        console.error("Error fetching community:", err);
-      }
-    };
-    loadCommunity();
-  }, []);
 
   // ✅ 2. Load Shop Products
   useEffect(() => {

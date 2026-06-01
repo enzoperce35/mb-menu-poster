@@ -4,13 +4,13 @@ import "./BundlesPoster.css";
 // 1. Import your images at the top
 import bundle1 from "../../assets/images/mb-bundles-poster.png";
 import bundle2 from "../../assets/images/mb-bundles-poster2.png";
-import catalog from "../../assets/images/mb-bundles-catalog.png"; // New import
+import catalog from "../../assets/images/mb-bundles-masonry.png"; // New import
 
 // 2. Reference the imported variables in your array
 const BUNDLE_IMAGES = [
   { id: 1, name: "Family Feast Bundle", src: bundle1 },
   { id: 2, name: "Barkada Treat", src: bundle2 },
-  { id: 3, name: "Product Catalog", src: catalog }, // New addition
+  { id: 3, name: "Product Masonry", src: catalog }, // New addition
 ];
 
 export default function BundlesPoster() {

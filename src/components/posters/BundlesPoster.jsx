@@ -9,7 +9,7 @@ import catalog from "../../assets/images/mb-bundles-masonry.png"; // New import
 // 2. Reference the imported variables in your array
 const BUNDLE_IMAGES = [
   { id: 1, name: "Family Feast Bundle", src: bundle1 },
-  { id: 2, name: "Barkada Treat", src: bundle2 },
+  //{ id: 2, name: "Barkada Treat", src: bundle2 },
   { id: 3, name: "Product Masonry", src: catalog }, // New addition
 ];
 

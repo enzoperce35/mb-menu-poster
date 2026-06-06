@@ -22,7 +22,7 @@ export default function CaptionMaker({ shop }) {
     {
       id: "vibe",
       label: "MB Bundles Link",
-      text: `Naghahanap po ba kayo ng panghanda para sa darating ninyong okasyon o gusto nyo lang ng masarap na mapakain para sa inyong mga bisita, barkada, o kapamilya?. Try nyo po ang Pasta Bundles ng Madonna Delicacies. Sigurado po sa quality, affordable at discounted.\n\nMay dedicated app po kami para maayos kayong makapamili ng mga bundles at combinations na gusto nyo. Thanks po.\n\nNasa first comment po ang link.\n\n`
+      text: `📲 ${mbBundlesLink}`
     },
     {
       id: "direct",

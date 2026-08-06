@@ -5,6 +5,7 @@ import CaptionMaker from "./components/posters/CaptionMaker.jsx";
 import BilaoPoster from "./components/posters/BilaoPoster.jsx";
 import QRPoster from "./components/posters/QRPoster.jsx";
 import BundlesPoster from "./components/posters/BundlesPoster.jsx";
+import OrderSlip from "./components/posters/OrderSlip";
 import { fetchProducts } from "./api/products";
 
 export default function App() {
@@ -89,6 +90,9 @@ export default function App() {
         <button onClick={() => setPosterType("caption")} style={getTabStyle("caption")}>
           Caption Maker
         </button>
+        <button onClick={() => setPosterType("order-slip")} style={getTabStyle("order-slip")}>
+          Order Slip
+        </button>
       </div>
 
       {/* --- Main View --- */}
@@ -115,6 +119,13 @@ export default function App() {
 
         {posterType === "qr" && (
           <QRPoster />
+        )}
+
+        {posterType === "order-slip" && (
+          <OrderSlip
+            products={allUniqueProducts}
+            shop={shop}
+          />
         )}
       </div>
     </div>

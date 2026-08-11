@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import html2canvas from "html2canvas";
 import { QRCodeSVG } from "qrcode.react";
 import { createFeedbackCard } from "../../api/feedbackCards";
@@ -10,19 +10,52 @@ export default function OrderSlip({ products = [], shop }) {
     const [feedbackUrl, setFeedbackUrl] = useState("");
     const [loadingCard, setLoadingCard] = useState(false);
 
-    // Flatten all variants from products into an array of items for keying
-    const allVariants = products.flatMap((p) =>
-        (p.variants || []).map((v) => ({
-            variantId: v.id,
-            productId: p.id,
-            productName: p.name,
-            variantName: v.name,
-            displayName: `${p.name} (${v.name})`,
-            price: v.price || p.price,
-        }))
-    );
+    // Active tab state for filtering checklist: 'preorder' | 'regular'
+    const [activeFilter, setActiveFilter] = useState("preorder");
 
-    // Load initial variant selections from localStorage (default to all unchecked: false)
+    // Categorize products into PreOrder and Regular products
+    const { preOrderProducts, regularProducts } = useMemo(() => {
+        const preOrder = [];
+        const regular = [];
+
+        products.forEach((p) => {
+            const rawGroups = p.delivery_groups || p.deliveryGroups || p.groups || [];
+
+            // Extract group names whether they are strings, Rails DeliveryGroup objects, or simple objects
+            const groupNames = rawGroups.map((g) => {
+                if (typeof g === "string") return g.trim().toLowerCase();
+                if (g && typeof g === "object") return (g.name || g.label || "").trim().toLowerCase();
+                return "";
+            }).filter(Boolean);
+
+            // Check if product belongs to PreOrder
+            const isPreOrder = groupNames.includes("preorder");
+
+            if (isPreOrder) {
+                preOrder.push(p);
+            } else {
+                regular.push(p);
+            }
+        });
+
+        return { preOrderProducts: preOrder, regularProducts: regular };
+    }, [products]);
+
+    // Flatten all variants for preview keying & calculation
+    const allVariants = useMemo(() => {
+        return products.flatMap((p) =>
+            (p.variants || []).map((v) => ({
+                variantId: v.id,
+                productId: p.id,
+                productName: p.name,
+                variantName: v.name,
+                displayName: `${p.name} (${v.name})`,
+                price: v.price || p.price,
+            }))
+        );
+    }, [products]);
+
+    // Saved selection state
     const [selectedVariants, setSelectedVariants] = useState(() => {
         const saved = localStorage.getItem("orderslip_selected_variants");
         if (saved) {
@@ -33,12 +66,11 @@ export default function OrderSlip({ products = [], shop }) {
             }
         }
         return allVariants.reduce((obj, item) => {
-            obj[item.variantId] = false; // Default to unchecked
+            obj[item.variantId] = false;
             return obj;
         }, {});
     });
 
-    // Persist selections across interactions
     useEffect(() => {
         localStorage.setItem(
             "orderslip_selected_variants",
@@ -53,57 +85,34 @@ export default function OrderSlip({ products = [], shop }) {
         }));
     };
 
-    const generateFeedbackCard = async () => {
-        try {
-            setLoadingCard(true);
-
-            const selectedProductIds = products
-                .filter((product) =>
-                    product.variants?.some((v) => selectedVariants[v.id])
-                )
-                .map((product) => product.id);
-
-                const response = await createFeedbackCard({
-                    customer_name: reference,
-                    product_ids: selectedProductIds,
-                });
-
-            setFeedbackUrl(response.feedback_url);
-
-        } catch (err) {
-            console.error(err);
-            alert("Unable to create feedback card.");
-        } finally {
-            setLoadingCard(false);
-        }
-    };
+    // Determine current list based on selected filter
+    const activeProductList = activeFilter === "preorder" ? preOrderProducts : regularProducts;
 
     const handleDownload = async () => {
         try {
             setLoadingCard(true);
-    
+
             const selectedProductIds = products
                 .filter((product) =>
                     product.variants?.some((v) => selectedVariants[v.id])
                 )
                 .map((product) => product.id);
-    
+
             const response = await createFeedbackCard({
                 customer_name: reference,
                 product_ids: selectedProductIds,
             });
-    
+
             setFeedbackUrl(response.feedback_url);
-    
-            // Wait for React to render the QR code
+
             await new Promise((resolve) => setTimeout(resolve, 300));
-    
+
             const canvas = await html2canvas(slipRef.current, {
                 scale: 3,
                 useCORS: true,
                 backgroundColor: "#ffffff",
             });
-    
+
             const link = document.createElement("a");
             link.download = `OrderSlip_${reference.replace(/\s+/g, "_")}.png`;
             link.href = canvas.toDataURL("image/png");
@@ -214,34 +223,59 @@ export default function OrderSlip({ products = [], shop }) {
                 </div>
 
                 <div className="control-group">
-                    <label className="control-label">Select Variants</label>
+                    <div className="products-control-bar">
+                        <label className="control-label" style={{ margin: 0 }}>Select Variants</label>
+                        
+                        {/* --- Clickable Filter Links --- */}
+                        <div className="category-tabs">
+                            <button
+                                type="button"
+                                className={`tab-link ${activeFilter === "preorder" ? "active" : ""}`}
+                                onClick={() => setActiveFilter("preorder")}
+                            >
+                                PreOrder
+                            </button>
+                            <span className="tab-separator">|</span>
+                            <button
+                                type="button"
+                                className={`tab-link ${activeFilter === "regular" ? "active" : ""}`}
+                                onClick={() => setActiveFilter("regular")}
+                            >
+                                Regular
+                            </button>
+                        </div>
+                    </div>
 
                     <div className="products-checklist">
-                        {products.map((p) => (
-                            <div key={p.id} className="product-group">
-                                <span className="product-group-title">{p.name}</span>
-                                {(p.variants || []).map((v) => (
-                                    <label key={v.id} className="checkbox-row variant-row">
-                                        <input
-                                            type="checkbox"
-                                            checked={!!selectedVariants[v.id]}
-                                            onChange={() => toggleVariant(v.id)}
-                                        />
-                                        <span className="checkbox-label">{v.name}</span>
-                                    </label>
-                                ))}
-                            </div>
-                        ))}
+                        {activeProductList.length > 0 ? (
+                            activeProductList.map((p) => (
+                                <div key={p.id} className="product-group">
+                                    <span className="product-group-title">{p.name}</span>
+                                    {(p.variants || []).map((v) => (
+                                        <label key={v.id} className="checkbox-row variant-row">
+                                            <input
+                                                type="checkbox"
+                                                checked={!!selectedVariants[v.id]}
+                                                onChange={() => toggleVariant(v.id)}
+                                            />
+                                            <span className="checkbox-label">{v.name}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            ))
+                        ) : (
+                            <p className="no-products-notice">No items available in this category.</p>
+                        )}
                     </div>
                 </div>
 
                 <button
-    className="download-button"
-    onClick={handleDownload}
-    disabled={loadingCard}
->
-    {loadingCard ? "Generating..." : "Download PNG"}
-</button>
+                    className="download-button"
+                    onClick={handleDownload}
+                    disabled={loadingCard}
+                >
+                    {loadingCard ? "Generating..." : "Download PNG"}
+                </button>
             </div>
         </div>
     );

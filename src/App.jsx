@@ -14,7 +14,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [posterType, setPosterType] = useState("now");
 
-  // ✅ 2. Load Shop Products
+  // Load Shop Products
   useEffect(() => {
     const load = async () => {
       try {
@@ -36,18 +36,43 @@ export default function App() {
 
   if (loading) return <div style={{ padding: "40px", textAlign: "center" }}>Loading menu...</div>;
 
-  // ✅ 3. Data Filtering & Logic
+  // --- Products Data Filtering ---
+  
+  // 1. Products in the "Now" delivery group
   const nowGroupProducts = groups.find((g) => g.name === "Now")?.products || [];
 
-  const allProductsMap = {};
+  // 2. All unique products EXCLUDING PreOrder (for FeaturedPoster, etc.)
+  const regularProductsMap = {};
   groups.forEach(group => {
     if (group.name.toLowerCase() !== "preorder") {
-      group.products.forEach(product => {
-        allProductsMap[product.id] = product;
+      (group.products || []).forEach(product => {
+        regularProductsMap[product.id] = product;
       });
     }
   });
-  const allUniqueProducts = Object.values(allProductsMap);
+  const regularUniqueProducts = Object.values(regularProductsMap);
+
+  // 3. ALL unique products INCLUDING PreOrder (specifically for OrderSlip)
+  const allProductsMap = {};
+  groups.forEach(group => {
+    (group.products || []).forEach(product => {
+      // Attach/ensure delivery group info is present on the product
+      const existingGroups = product.delivery_groups || product.deliveryGroups || [];
+      const hasGroup = existingGroups.some(g => 
+        (typeof g === "string" ? g : g?.name)?.toLowerCase() === group.name.toLowerCase()
+      );
+
+      const updatedGroups = hasGroup 
+        ? existingGroups 
+        : [...existingGroups, { name: group.name }];
+
+      allProductsMap[product.id] = {
+        ...product,
+        delivery_groups: updatedGroups
+      };
+    });
+  });
+  const allUniqueProductsWithPreOrder = Object.values(allProductsMap);
 
   const getTabStyle = (type) => ({
     padding: "10px 15px",
@@ -83,7 +108,7 @@ export default function App() {
         </button>
         <button onClick={() => setPosterType("bundles")} style={getTabStyle("bundles")}>
           Bundles Poster
-        </button> {/* ✅ New Button */}
+        </button>
         <button onClick={() => setPosterType("qr")} style={getTabStyle("qr")}>
           QR Poster
         </button>
@@ -106,12 +131,12 @@ export default function App() {
         )}
 
         {posterType === "featured" && (
-          <FeaturedPoster products={allUniqueProducts} shop={shop} />
+          <FeaturedPoster products={regularUniqueProducts} shop={shop} />
         )}
 
         {posterType === "bundles" && (
           <BundlesPoster />
-        )} {/* ✅ New Render Condition */}
+        )}
 
         {posterType === "caption" && (
           <CaptionMaker shop={shop} />
@@ -123,7 +148,7 @@ export default function App() {
 
         {posterType === "order-slip" && (
           <OrderSlip
-            products={allUniqueProducts}
+            products={allUniqueProductsWithPreOrder}
             shop={shop}
           />
         )}

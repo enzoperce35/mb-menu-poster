@@ -5,6 +5,7 @@ import CaptionMaker from "./components/posters/CaptionMaker.jsx";
 import BilaoPoster from "./components/posters/BilaoPoster.jsx";
 import QRPoster from "./components/posters/QRPoster.jsx";
 import BundlesPoster from "./components/posters/BundlesPoster.jsx";
+import CommunityPoster from "./components/posters/CommunityPoster.jsx";
 import OrderSlip from "./components/posters/OrderSlip";
 import { fetchProducts } from "./api/products";
 
@@ -13,6 +14,36 @@ export default function App() {
   const [shop, setShop] = useState(null);
   const [loading, setLoading] = useState(true);
   const [posterType, setPosterType] = useState("now");
+  const [community, setCommunity] = useState(null);
+
+  // ✅ 1. Load Community Data
+  useEffect(() => {
+    const loadCommunity = async () => {
+      const isDev = process.env.NODE_ENV === 'development';
+      const communityId = isDev ? 2 : 1;
+
+      const API_BASE = isDev
+        ? "http://127.0.0.1:3000/api/v1"
+        : "https://servewise-market-backend.onrender.com/api/v1";
+
+      try {
+        const response = await fetch(`${API_BASE}/communities/${communityId}`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) throw new Error(`Server status: ${response.status}`);
+
+        const data = await response.json();
+        setCommunity(data);
+      } catch (err) {
+        console.error("Error fetching community:", err);
+      }
+    };
+    loadCommunity();
+  }, []);
 
   // Load Shop Products
   useEffect(() => {
@@ -37,7 +68,7 @@ export default function App() {
   if (loading) return <div style={{ padding: "40px", textAlign: "center" }}>Loading menu...</div>;
 
   // --- Products Data Filtering ---
-  
+
   // 1. Products in the "Now" delivery group
   const nowGroupProducts = groups.find((g) => g.name === "Now")?.products || [];
 
@@ -58,12 +89,12 @@ export default function App() {
     (group.products || []).forEach(product => {
       // Attach/ensure delivery group info is present on the product
       const existingGroups = product.delivery_groups || product.deliveryGroups || [];
-      const hasGroup = existingGroups.some(g => 
+      const hasGroup = existingGroups.some(g =>
         (typeof g === "string" ? g : g?.name)?.toLowerCase() === group.name.toLowerCase()
       );
 
-      const updatedGroups = hasGroup 
-        ? existingGroups 
+      const updatedGroups = hasGroup
+        ? existingGroups
         : [...existingGroups, { name: group.name }];
 
       allProductsMap[product.id] = {
@@ -109,6 +140,9 @@ export default function App() {
         <button onClick={() => setPosterType("bundles")} style={getTabStyle("bundles")}>
           Bundles Poster
         </button>
+        <button onClick={() => setPosterType("community")} style={getTabStyle("community")}>
+          Community Poster
+        </button>
         <button onClick={() => setPosterType("qr")} style={getTabStyle("qr")}>
           QR Poster
         </button>
@@ -140,6 +174,10 @@ export default function App() {
 
         {posterType === "caption" && (
           <CaptionMaker shop={shop} />
+        )}
+
+        {posterType === "community" && (
+          <CommunityPoster community={community} />
         )}
 
         {posterType === "qr" && (

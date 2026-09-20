@@ -7,7 +7,7 @@ import QRPoster from "./components/posters/QRPoster.jsx";
 import BundlesPoster from "./components/posters/BundlesPoster.jsx";
 import CommunityPoster from "./components/posters/CommunityPoster.jsx";
 import OrderSlip from "./components/posters/OrderSlip";
-import { fetchProducts } from "./api/products";
+import client from "./api/client"; // Use your configured axios client
 
 export default function App() {
   const [groups, setGroups] = useState([]);
@@ -22,22 +22,9 @@ export default function App() {
       const isDev = process.env.NODE_ENV === 'development';
       const communityId = isDev ? 2 : 1;
 
-      const API_BASE = isDev
-        ? "http://127.0.0.1:3000/api/v1"
-        : "https://servewise-market-backend.onrender.com/api/v1";
-
       try {
-        const response = await fetch(`${API_BASE}/communities/${communityId}`, {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) throw new Error(`Server status: ${response.status}`);
-
-        const data = await response.json();
-        setCommunity(data);
+        const response = await client.get(`/communities/${communityId}`);
+        setCommunity(response.data);
       } catch (err) {
         console.error("Error fetching community:", err);
       }
@@ -49,7 +36,8 @@ export default function App() {
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await fetchProducts(1);
+        const response = await client.get("/products?shop_id=1&include=variants");
+        const data = response.data;
         setGroups(data);
 
         const firstGroupWithProducts = data.find(g => g.products && g.products.length > 0);
@@ -68,11 +56,8 @@ export default function App() {
   if (loading) return <div style={{ padding: "40px", textAlign: "center" }}>Loading menu...</div>;
 
   // --- Products Data Filtering ---
-
-  // 1. Products in the "Now" delivery group
   const nowGroupProducts = groups.find((g) => g.name === "Now")?.products || [];
 
-  // 2. All unique products EXCLUDING PreOrder (for FeaturedPoster, etc.)
   const regularProductsMap = {};
   groups.forEach(group => {
     if (group.name.toLowerCase() !== "preorder") {
@@ -83,11 +68,9 @@ export default function App() {
   });
   const regularUniqueProducts = Object.values(regularProductsMap);
 
-  // 3. ALL unique products INCLUDING PreOrder (specifically for OrderSlip)
   const allProductsMap = {};
   groups.forEach(group => {
     (group.products || []).forEach(product => {
-      // Attach/ensure delivery group info is present on the product
       const existingGroups = product.delivery_groups || product.deliveryGroups || [];
       const hasGroup = existingGroups.some(g =>
         (typeof g === "string" ? g : g?.name)?.toLowerCase() === group.name.toLowerCase()
@@ -119,8 +102,6 @@ export default function App() {
 
   return (
     <div style={{ padding: "20px", backgroundColor: "#f4f4f4", minHeight: "100vh" }}>
-
-      {/* --- Navigation Tabs --- */}
       <div style={{
         marginBottom: "25px",
         display: "flex",
@@ -128,68 +109,25 @@ export default function App() {
         gap: "8px",
         flexWrap: "wrap"
       }}>
-        <button onClick={() => setPosterType("now")} style={getTabStyle("now")}>
-          Now Poster
-        </button>
-        <button onClick={() => setPosterType("bilao")} style={getTabStyle("bilao")}>
-          Bilao Poster
-        </button>
-        <button onClick={() => setPosterType("featured")} style={getTabStyle("featured")}>
-          Featured Poster
-        </button>
-        <button onClick={() => setPosterType("bundles")} style={getTabStyle("bundles")}>
-          Bundles Poster
-        </button>
-        <button onClick={() => setPosterType("community")} style={getTabStyle("community")}>
-          Community Poster
-        </button>
-        <button onClick={() => setPosterType("qr")} style={getTabStyle("qr")}>
-          QR Poster
-        </button>
-        <button onClick={() => setPosterType("caption")} style={getTabStyle("caption")}>
-          Caption Maker
-        </button>
-        <button onClick={() => setPosterType("order-slip")} style={getTabStyle("order-slip")}>
-          Order Slip
-        </button>
+        <button onClick={() => setPosterType("now")} style={getTabStyle("now")}>Now Poster</button>
+        <button onClick={() => setPosterType("bilao")} style={getTabStyle("bilao")}>Bilao Poster</button>
+        <button onClick={() => setPosterType("featured")} style={getTabStyle("featured")}>Featured Poster</button>
+        <button onClick={() => setPosterType("bundles")} style={getTabStyle("bundles")}>Bundles Poster</button>
+        <button onClick={() => setPosterType("community")} style={getTabStyle("community")}>Community Poster</button>
+        <button onClick={() => setPosterType("qr")} style={getTabStyle("qr")}>QR Poster</button>
+        <button onClick={() => setPosterType("caption")} style={getTabStyle("caption")}>Caption Maker</button>
+        <button onClick={() => setPosterType("order-slip")} style={getTabStyle("order-slip")}>Order Slip</button>
       </div>
 
-      {/* --- Main View --- */}
       <div style={{ display: "flex", justifyContent: "center" }}>
-        {posterType === "now" && (
-          <NowPoster products={nowGroupProducts} shop={shop} />
-        )}
-
-        {posterType === "bilao" && (
-          <BilaoPoster products={nowGroupProducts} shop={shop} />
-        )}
-
-        {posterType === "featured" && (
-          <FeaturedPoster products={regularUniqueProducts} shop={shop} />
-        )}
-
-        {posterType === "bundles" && (
-          <BundlesPoster />
-        )}
-
-        {posterType === "caption" && (
-          <CaptionMaker shop={shop} />
-        )}
-
-        {posterType === "community" && (
-          <CommunityPoster community={community} />
-        )}
-
-        {posterType === "qr" && (
-          <QRPoster />
-        )}
-
-        {posterType === "order-slip" && (
-          <OrderSlip
-            products={allUniqueProductsWithPreOrder}
-            shop={shop}
-          />
-        )}
+        {posterType === "now" && <NowPoster products={nowGroupProducts} shop={shop} />}
+        {posterType === "bilao" && <BilaoPoster products={nowGroupProducts} shop={shop} />}
+        {posterType === "featured" && <FeaturedPoster products={regularUniqueProducts} shop={shop} />}
+        {posterType === "bundles" && <BundlesPoster />}
+        {posterType === "caption" && <CaptionMaker shop={shop} />}
+        {posterType === "community" && <CommunityPoster community={community} />}
+        {posterType === "qr" && <QRPoster />}
+        {posterType === "order-slip" && <OrderSlip products={allUniqueProductsWithPreOrder} shop={shop} />}
       </div>
     </div>
   );

@@ -13,16 +13,17 @@ export default function CommunityPoster({ community }) {
     // 1. Group products by shop first
     const shopBuckets = community.shops.map(shop => {
       const validProducts = (shop.products || [])
-        .filter(p => {
-          const isFeatured = p.featured === true;
-          const hasImage = p.image_url && p.image_url.trim() !== "";
-          const hasVariants = p.variants && p.variants.length > 0;
-          const isActive = hasVariants 
-            ? p.variants.some(v => v.active === true)
-            : p.product_delivery_groups?.some(dg => dg.active === true);
-          
-          return isFeatured && hasImage && isActive;
-        })
+      .filter(p => {
+        const isFeatured = p.featured === true;
+        const hasImage = p.image_url && p.image_url.trim() !== "";
+        const hasStock = Number(p.stock) > 0;
+        const hasVariants = p.variants && p.variants.length > 0;
+        const isActive = hasVariants
+          ? p.variants.some(v => v.active === true)
+          : p.product_delivery_groups?.some(dg => dg.active === true);
+      
+        return isFeatured && hasImage && hasStock && isActive;
+      })
         .map(p => ({
           ...p,
           shopName: shop.name,
